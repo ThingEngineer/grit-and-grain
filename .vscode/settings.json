@@ -1,0 +1,19 @@
+{
+  "editor.formatOnSave": true, // Global setting for format on save
+  "[sql]": {
+    "editor.formatOnSave": false // Disable format on save specifically for SQL files
+  },
+  "sqltools.connections": [
+    {
+      "ssh": "Disabled",
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 54322,
+      "driver": "PostgreSQL",
+      "name": "Grit & Grain - local",
+      "database": "postgres",
+      "username": "postgres",
+      "password": "postgres"
+    }
+  ]
+}
