@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { DiaryEntryCard } from "@/components/diary-entry-card";
 import { EmptyState } from "@/components/empty-state";
+import { SeedButton } from "@/components/seed-button";
 import Link from "next/link";
 
 export default async function DashboardPage() {
@@ -79,16 +80,7 @@ export default async function DashboardPage() {
         >
           + New diary entry
         </Link>
-        {!hasEntries && (
-          <form action="/api/seed" method="POST">
-            <button
-              type="submit"
-              className="rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
-            >
-              Seed demo data
-            </button>
-          </form>
-        )}
+        {!hasEntries && <SeedButton />}
       </div>
 
       {/* Recent diary entries */}
