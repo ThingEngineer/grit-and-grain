@@ -1,8 +1,17 @@
 # AI Prompt Templates
 
+> **Runtime:** All prompts are executed through [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) using the [Vercel AI SDK](https://sdk.vercel.ai/) (`ai` package).
+>
+> - **Text generation** — Anthropic Claude (via `@ai-sdk/anthropic`) — powers Farm Memory chat and Weekly Review
+> - **Embeddings** — OpenAI `text-embedding-3-small`, 1536 dimensions (via `@ai-sdk/openai`)
+>
+> Route handlers: `POST /api/ai/chat`, `POST /api/ai/weekly-review`, `POST /api/ai/embed`
+
+---
+
 ## 1. Farm Memory — RAG Chat Prompt
 
-Used when a user submits a question in the **Farm Memory** chat interface. The system retrieves the top-k most relevant diary entry chunks from the longitudinal vector database (pgvector cosine similarity search) and injects them as context.
+Used when a user submits a question in the **Farm Memory** chat interface. The system retrieves the top-k most relevant diary entry chunks from the longitudinal vector database (pgvector cosine similarity search via `match_diary_entries` Postgres function) and injects them as context.
 
 ```
 system:
@@ -29,18 +38,18 @@ user:
 
 ### Retrieval Parameters (recommended defaults)
 
-| Parameter | Value | Notes |
-|---|---|---|
-| `top_k` | 8 | Increase to 12 for trend/historical questions |
-| Similarity metric | Cosine | Configured via pgvector `<=>` operator |
-| Min similarity threshold | 0.72 | Discard low-relevance chunks |
-| Chunk size | 256 tokens | With 32-token overlap |
+| Parameter                | Value      | Notes                                         |
+| ------------------------ | ---------- | --------------------------------------------- |
+| `top_k`                  | 8          | Increase to 12 for trend/historical questions |
+| Similarity metric        | Cosine     | Configured via pgvector `<=>` operator        |
+| Min similarity threshold | 0.72       | Discard low-relevance chunks                  |
+| Chunk size               | 256 tokens | With 32-token overlap                         |
 
 ---
 
 ## 2. Weekly Review Prompt
 
-Run as a scheduled Edge Function (e.g. every Sunday at 18:00 local time). Receives the full text of all diary entries from the past 7 days for the authenticated user.
+Run on-demand via `POST /api/ai/weekly-review`. Default range: rolling last 7 days; supports custom start/end date. In production, this would be scheduled via Vercel Cron / Supabase pg_cron on a user-chosen cadence (weekly/biweekly) with optional SMS/email delivery. Receives the full text of all diary entries within the selected date range for the authenticated user.
 
 ```
 system:
@@ -83,9 +92,88 @@ Diary entries for the week:
 
 ### Anti-Hallucination Checklist
 
-Before sending the Weekly Review to the user, the Edge Function performs these automated checks:
+Before sending the Weekly Review to the user, the route handler performs these automated checks:
 
 - [ ] Every numerical value (rainfall mm/in, hay bales, head count) appears verbatim in at least one source entry.
 - [ ] No dates outside the current week's range appear in the summary unless they are referenced in an entry.
 - [ ] "Trends to Watch" bullets are flagged as observations, not instructions (use "worth monitoring" language).
-- [ ] If `weekly_entries` is empty or fewer than 2 entries, substitute the fixed message: *"Not enough entries this week to generate a review. Keep logging!"*
+- [ ] If `weekly_entries` is empty or fewer than 2 entries, substitute the fixed message: _"Not enough entries this week to generate a review. Keep logging!"_
+
+### Expected Output Structure (judge-optimised)
+
+The Weekly Review route handler renders the AI output in a structured format:
+
+1. **Key Events** — 3–6 bullets of what happened (with date reference)
+2. **Risks / Flags** — 0–3 bullets (only if supported by entries)
+3. **Recommendations** — Top 3, prioritised
+4. **Evidence (citations)** — List of diary entry dates/pastures used
+5. **Confidence / Missing Data** — e.g. "I didn't see hay test results this week…" (reduces hallucination risk and signals maturity)
+
+---
+
+## 3. Canonical `content_for_rag` Format
+
+When a diary entry is created or updated, the system constructs a canonical text string used for embedding generation and RAG retrieval. This string is stored in `entry_embeddings.content_for_rag` alongside the vector.
+
+```
+Date: {{ entry_date }}
+Pasture: {{ pasture_name }} ({{ acres }} acres)
+Herd: {{ herd_group_name }} ({{ head_count }} head)
+Rain: {{ rain_inches }} in
+Move: {{ from_pasture }} → {{ to_pasture }}
+Hay: {{ hay_action }} {{ hay_qty }}
+Notes: {{ content }}
+```
+
+**Rules:**
+
+- Omit lines where the value is null/empty (e.g. if no rain was recorded, omit the `Rain:` line).
+- Use the user-facing `content` field (cleaned text), not `raw_transcript`.
+- Include pasture name and herd group name (resolved from IDs) for semantic richness.
+- This format ensures the embedding captures structured context alongside free-text observations.
+
+---
+
+## 4. NLP Entity Extraction Prompt
+
+Used after voice-to-text transcription to auto-tag the diary entry with recognised pasture names, herd groups, and observation categories. Runs server-side before saving the entry.
+
+```
+system:
+You are a farm diary tagger for Grit & Grain. Given the user's voice note transcript and their
+list of registered pastures and herd groups, extract structured tags.
+
+Return a JSON object with these fields:
+{
+  "pasture_name": "<matched pasture name or null>",
+  "herd_group_name": "<matched herd group name or null>",
+  "tags": ["<category1>", "<category2>", ...],
+  "entry_date": "<YYYY-MM-DD if mentioned, else null>"
+}
+
+Valid tags: rainfall, rotation, hay, herd_health, supplement, fencing, water, weather, planting, soil, general
+
+Rules:
+1. Match pasture/herd names fuzzy (e.g. "south pasture" → "South Pasture", "the angus" → "Angus Cow-Calf Pairs").
+2. If no clear match, return null — do not guess.
+3. Extract only tags that are explicitly mentioned or strongly implied in the transcript.
+4. If the user mentions a date (e.g. "yesterday", "February 28th"), resolve it relative to today ({{ today_date }}).
+5. Return valid JSON only — no explanation text.
+
+Registered pastures:
+{{ pasture_list }}
+
+Registered herd groups:
+{{ herd_group_list }}
+
+user:
+{{ raw_transcript }}
+```
+
+### Parameters
+
+| Parameter   | Value                             | Notes                        |
+| ----------- | --------------------------------- | ---------------------------- |
+| Model       | Anthropic Claude (via AI Gateway) | Fast, reliable JSON output   |
+| Temperature | 0                                 | Deterministic extraction     |
+| Max tokens  | 200                               | Structured output is compact |
