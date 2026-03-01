@@ -4,6 +4,7 @@ import { FormEvent, useMemo, useState } from "react";
 import { DefaultChatTransport } from "ai";
 import { useChat } from "@ai-sdk/react";
 import Markdown from "react-markdown";
+import { checkTopicRelevance } from "@/lib/ai/topic-guard";
 
 export default function ChatPage() {
   const { messages, sendMessage, status, error } = useChat({
@@ -12,7 +13,30 @@ export default function ChatPage() {
     }),
   });
   const [input, setInput] = useState("");
+  const [topicWarning, setTopicWarning] = useState<string | undefined>();
   const isLoading = status === "submitted" || status === "streaming";
+
+  function handleInputChange(value: string) {
+    setInput(value);
+    // Only evaluate once the user has typed a few words
+    if (value.trim().split(/\s+/).length >= 3) {
+      const check = checkTopicRelevance(value);
+      setTopicWarning(check.allowed ? undefined : check.reason);
+    } else {
+      setTopicWarning(undefined);
+    }
+  }
+
+  // Try to surface the structured error message returned by the server (e.g. 422 topic guard)
+  const errorMessage = useMemo(() => {
+    if (!error) return null;
+    try {
+      const parsed = JSON.parse(error.message) as { error?: string };
+      return parsed.error ?? "Something went wrong. Please try again.";
+    } catch {
+      return "Something went wrong. Please try again.";
+    }
+  }, [error]);
 
   const renderedMessages = useMemo(
     () =>
@@ -39,7 +63,13 @@ export default function ChatPage() {
       return;
     }
 
+    // Block submission for clearly off-topic messages (server will also reject these)
+    if (topicWarning) {
+      return;
+    }
+
     setInput("");
+    setTopicWarning(undefined);
     await sendMessage({ text: value });
   }
 
@@ -118,28 +148,39 @@ export default function ChatPage() {
 
         {error && (
           <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-400">
-            Something went wrong. Please try again.
+            {errorMessage}
           </div>
         )}
       </div>
 
       {/* Input */}
-      <form onSubmit={onSubmit} className="mt-4 flex gap-2">
-        <input
-          id="chat-input"
-          value={input}
-          onChange={(event) => setInput(event.target.value)}
-          placeholder="Ask about your ranch history…"
-          className="flex-1 rounded-lg border border-border bg-background px-4 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
-          disabled={isLoading}
-        />
-        <button
-          type="submit"
-          disabled={isLoading || !input.trim()}
-          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          Ask
-        </button>
+      <form onSubmit={onSubmit} className="mt-4 flex flex-col gap-2">
+        {topicWarning && (
+          <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
+            {topicWarning}
+          </p>
+        )}
+        <div className="flex gap-2">
+          <input
+            id="chat-input"
+            value={input}
+            onChange={(event) => handleInputChange(event.target.value)}
+            placeholder="Ask about your ranch history…"
+            className={`flex-1 rounded-lg border bg-background px-4 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 ${
+              topicWarning
+                ? "border-amber-400 focus:border-amber-500 focus:ring-amber-500"
+                : "border-border focus:border-ring focus:ring-ring"
+            }`}
+            disabled={isLoading}
+          />
+          <button
+            type="submit"
+            disabled={isLoading || !input.trim() || !!topicWarning}
+            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Ask
+          </button>
+        </div>
       </form>
     </div>
   );

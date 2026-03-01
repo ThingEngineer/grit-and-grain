@@ -2,6 +2,7 @@ import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import { chatModel } from "@/lib/ai/gateway";
 import { searchDiaryEntries } from "@/lib/rag/search";
 import { FARM_MEMORY_SYSTEM_PROMPT } from "@/lib/ai/prompts";
+import { checkTopicRelevance } from "@/lib/ai/topic-guard";
 import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
@@ -42,6 +43,12 @@ export async function POST(request: Request) {
       { error: "No user text content found" },
       { status: 400 },
     );
+  }
+
+  // Guard: reject off-topic messages before touching RAG or the LLM
+  const topicCheck = checkTopicRelevance(lastUserMessageText);
+  if (!topicCheck.allowed) {
+    return Response.json({ error: topicCheck.reason }, { status: 422 });
   }
 
   // Determine if this is a trend question (use more context)
