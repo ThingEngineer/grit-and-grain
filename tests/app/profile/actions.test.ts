@@ -4,9 +4,18 @@ import { makeMockSupabase } from "@/tests/helpers/supabase";
 // ── Mocks ────────────────────────────────────────────────────────────────────
 const mockRedirect = vi.fn();
 const mockRevalidatePath = vi.fn();
+const mockCookieSet = vi.fn();
+const mockCookieDelete = vi.fn();
 
 vi.mock("next/navigation", () => ({ redirect: mockRedirect }));
 vi.mock("next/cache", () => ({ revalidatePath: mockRevalidatePath }));
+vi.mock("next/headers", () => ({
+  cookies: () =>
+    Promise.resolve({
+      set: mockCookieSet,
+      delete: mockCookieDelete,
+    }),
+}));
 
 let mockSupabase = makeMockSupabase();
 vi.mock("@/lib/supabase/server", () => ({

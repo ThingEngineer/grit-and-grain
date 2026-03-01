@@ -32,6 +32,7 @@ function makeNextRequest(path: string) {
     headers: new Headers(),
     cookies: {
       getAll: () => [],
+      get: vi.fn().mockReturnValue(undefined),
       set: vi.fn(),
     },
     nextUrl: {
