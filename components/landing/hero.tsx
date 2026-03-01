@@ -71,7 +71,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-6 font-serif text-4xl font-bold leading-tight text-zinc-900 md:text-6xl"
+            className="mt-6 font-serif text-4xl font-bold leading-tight text-white md:text-6xl"
           >
             Stop relying on memory.{" "}
             <span className="text-accent">Start relying on history.</span>
@@ -102,7 +102,7 @@ export function Hero() {
             </Link>
             <Link
               href="/login"
-              className="rounded-full border border-white/30 px-8 py-3 text-center font-medium text-zinc-900 transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+              className="rounded-full border border-white/30 px-8 py-3 text-center font-medium text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
             >
               Sign In
             </Link>

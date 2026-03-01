@@ -5,13 +5,13 @@ import { FeaturesSection } from "@/components/landing/features-section";
 import { CalloutStrip } from "@/components/landing/callout-strip";
 import { CTASection } from "@/components/landing/cta-section";
 import { Footer } from "@/components/landing/footer";
-import { ForceDarkMode } from "@/components/landing/force-dark-mode";
+import { ForceLightMode } from "@/components/landing/force-dark-mode";
 
 export default function LandingPage() {
   return (
     <>
       <main className="scroll-smooth">
-        <ForceDarkMode />
+        <ForceLightMode />
         <LandingNav />
         <Hero />
         <ProblemSection />
