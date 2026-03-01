@@ -5,7 +5,8 @@ import { WifiOff, Loader2, Check } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 export function OfflineBanner() {
-  const { isOnline, pendingCount, isSyncing, lastSyncResults } = useOffline();
+  const { isOnline, pendingCount, isSyncing, lastSyncResults, flush } =
+    useOffline();
 
   const allSynced =
     lastSyncResults !== null &&
@@ -47,6 +48,30 @@ export function OfflineBanner() {
             Showing cached content from your last visit — new entries and
             changes made offline will appear after you reconnect and sync.
           </p>
+        </motion.div>
+      )}
+
+      {/* Online with un-synced items (e.g. sync failed on reconnect) */}
+      {isOnline && pendingCount > 0 && !isSyncing && (
+        <motion.div
+          key="pending"
+          initial={{ y: -40, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -40, opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          role="status"
+          aria-live="polite"
+          className="flex items-center justify-center gap-3 border-b border-amber-200 bg-amber-50 px-4 py-2 dark:border-amber-800 dark:bg-amber-950"
+        >
+          <span className="text-sm font-medium text-amber-900 dark:text-amber-200">
+            {pendingCount} change{pendingCount !== 1 ? "s" : ""} waiting to sync
+          </span>
+          <button
+            onClick={() => flush()}
+            className="rounded bg-amber-200 px-2.5 py-1 text-xs font-semibold text-amber-900 hover:bg-amber-300 dark:bg-amber-800 dark:text-amber-100 dark:hover:bg-amber-700"
+          >
+            Sync now
+          </button>
         </motion.div>
       )}
 

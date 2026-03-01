@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { startTransition, useCallback, useEffect, useRef, useState } from "react";
 import { get, set, del } from "idb-keyval";
+import { useRouter } from "next/navigation";
 import { useOnlineStatus } from "./use-online-status";
 
 const QUEUE_KEY = "grit-offline-queue";
@@ -61,10 +62,20 @@ export function useOfflineQueue() {
   const { isOnline } = useOnlineStatus();
   const wasOnlineRef = useRef(isOnline);
   const syncingRef = useRef(false);
+  const router = useRouter();
 
-  // Load queue from IndexedDB on mount
+  // Load queue from IndexedDB on mount; flush immediately if already online
   useEffect(() => {
-    loadQueue().then(setQueue);
+    loadQueue().then((q) => {
+      setQueue(q);
+      // Covers the page-refresh case: wasOnlineRef starts true so the
+      // offline→online transition effect never fires — flush here instead.
+      if (navigator.onLine && q.length > 0) {
+        flush();
+      }
+    });
+    // flush is stable (empty useCallback deps), safe to include
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const enqueue = useCallback(
@@ -114,13 +125,29 @@ export function useOfflineQueue() {
       const remaining = currentQueue.filter((op) => failedIds.has(op.id));
       await saveQueue(remaining);
       setQueue(remaining);
+
+      // Refresh server components so newly synced entries appear immediately
+      if (remaining.length < currentQueue.length) {
+        startTransition(() => router.refresh());
+      }
     } catch (err) {
       console.error("[offline-queue] Sync error:", err);
     } finally {
       syncingRef.current = false;
       setIsSyncing(false);
     }
-  }, []);
+  }, [router]);
+
+  // Auto-clear the success banner after 4 s
+  useEffect(() => {
+    if (
+      lastSyncResults !== null &&
+      lastSyncResults.every((r) => r.success)
+    ) {
+      const t = setTimeout(() => setLastSyncResults(null), 4000);
+      return () => clearTimeout(t);
+    }
+  }, [lastSyncResults]);
 
   // Auto-flush when transitioning from offline → online
   useEffect(() => {

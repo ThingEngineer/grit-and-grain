@@ -66,7 +66,7 @@ export async function POST(request: Request) {
               tags?: string[];
             };
 
-          const { data: newEntry, error } = await supabase
+          let insertResult = await supabase
             .from("diary_entries")
             .insert({
               profile_id: user.id,
@@ -79,6 +79,28 @@ export async function POST(request: Request) {
             .select("id")
             .single();
 
+          // If a FK constraint fails (e.g. pasture/herd deleted since going
+          // offline), retry without the stale associations so the entry text
+          // is never lost.
+          if (
+            insertResult.error?.code === "23503" &&
+            (pasture_id || herd_group_id)
+          ) {
+            insertResult = await supabase
+              .from("diary_entries")
+              .insert({
+                profile_id: user.id,
+                entry_date,
+                content,
+                pasture_id: null,
+                herd_group_id: null,
+                tags: tags && tags.length > 0 ? tags : [],
+              })
+              .select("id")
+              .single();
+          }
+
+          const { data: newEntry, error } = insertResult;
           if (error) throw new Error(error.message);
 
           // Fire-and-forget embedding generation
