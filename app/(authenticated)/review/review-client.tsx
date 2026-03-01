@@ -3,6 +3,19 @@
 import { useState } from "react";
 import Markdown from "react-markdown";
 
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/#{1,6}\s?/g, "") // headings
+    .replace(/\*{1,3}([^*]+)\*{1,3}/g, "$1") // bold/italic
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // links
+    .replace(/^[\s]*[-*+]\s/gm, "") // list markers
+    .replace(/^>\s?/gm, "") // blockquotes
+    .replace(/`{1,3}[^`]*`{1,3}/g, "") // inline code
+    .replace(/\n{2,}/g, " ") // collapse newlines
+    .replace(/\n/g, " ")
+    .trim();
+}
+
 type WeeklyReview = {
   id: string;
   week_start: string;
@@ -173,7 +186,7 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
                   {review.week_start} — {review.week_end}
                 </div>
                 <div className="mt-1 truncate text-xs text-zinc-500 dark:text-zinc-400">
-                  {review.summary_md.slice(0, 80)}…
+                  {stripMarkdown(review.summary_md).slice(0, 80)}…
                 </div>
               </button>
             ))}

@@ -3,6 +3,7 @@
 import { FormEvent, useMemo, useState } from "react";
 import { DefaultChatTransport } from "ai";
 import { useChat } from "@ai-sdk/react";
+import Markdown from "react-markdown";
 
 export default function ChatPage() {
   const { messages, sendMessage, status, error } = useChat({
@@ -94,7 +95,13 @@ export default function ChatPage() {
                   : "bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-50"
               }`}
             >
-              <div className="whitespace-pre-wrap">{m.text}</div>
+              {m.role === "user" ? (
+                <div className="whitespace-pre-wrap">{m.text}</div>
+              ) : (
+                <div className="prose prose-zinc prose-sm max-w-none dark:prose-invert prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-li:my-0">
+                  <Markdown>{m.text}</Markdown>
+                </div>
+              )}
             </div>
           </div>
         ))}
