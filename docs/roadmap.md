@@ -50,7 +50,29 @@ _Goal: make the app genuinely usable in a no-signal, muddy-hands environment._
 
 - Vercel Cron (`/api/cron/weekly-review`) fires every Monday morning
 - Per-user opt-in with configurable day/time in account settings
-- Optional email delivery of the generated summary (Resend / SendGrid)
+- Email delivery of the generated summary (see 1.5)
+
+### 1.5 Transactional Email
+
+- Integrate [Resend](https://resend.com) via the official `resend` Node.js SDK for all outbound email
+- **Auth emails:** password-reset, email-verification, and invite-to-ranch sent through Supabase Auth custom SMTP → Resend
+- **Weekly Review digest:** HTML email edition of the AI summary delivered on each scheduled run; unsubscribe link per-user
+- **Alert emails:** opt-in digest of proactive AI alerts (see Phase 4.1) — batched daily or immediately depending on severity
+- **Billing events:** trial expiry reminders, payment failure notices, and plan-change confirmations (hooks into Phase 6)
+- React Email templates stored in `emails/` for consistent branding; preview server via `email dev` script
+- Per-user notification preferences table (`notification_preferences`) with channel toggles (email / push) and quiet-hours setting
+- Unsubscribe handled via signed one-click URL; preference centre at `/account/notifications`
+
+### 1.6 Web Push Notifications
+
+- VAPID key pair generated at deploy time; public key stored in `NEXT_PUBLIC_VAPID_PUBLIC_KEY`
+- Service worker registers `pushManager.subscribe()` on first authenticated visit; subscription stored in `push_subscriptions` table (user, endpoint, keys)
+- `POST /api/push/subscribe` and `DELETE /api/push/subscribe` route handlers manage subscription lifecycle
+- Server-side delivery via the `web-push` npm package called from route handlers or Vercel Cron jobs
+- **Notification types:** weekly review ready, proactive AI alert (Phase 4.1), sync conflict detected, low hay inventory warning
+- Permission prompt deferred until user takes a meaningful action (not on page load) to protect opt-in rate
+- Notification click opens the relevant app page from the service worker `notificationclick` handler
+- Per-user push preferences respected from the same `notification_preferences` table as email (1.5)
 
 ---
 
@@ -147,7 +169,9 @@ _Goal: let the app surface proactive intelligence rather than requiring the ranc
 - "North Pasture hasn't rested in 45 days — last entry suggested feed pressure was building"
 - "Hay inventory is projected to run out in ~3 weeks at current feeding rate"
 - "Bull turnout is due in 2 weeks based on last year's breeding log"
-- Delivered as dashboard notification cards + optional push notification (Web Push API)
+- Delivered as dashboard notification cards; push notification and email delivery powered by the infrastructure from phases 1.5 and 1.6
+- Alert severity levels: `info`, `warning`, `critical` — only `warning`/`critical` trigger push; all levels visible in-app
+- Alert history stored in `alert_events` table; dismissed alerts not re-surfaced for 7 days
 
 ### 4.2 Weather Integration
 
