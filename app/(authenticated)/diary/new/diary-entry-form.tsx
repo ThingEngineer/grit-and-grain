@@ -2,6 +2,7 @@
 
 import { createEntry } from "../actions";
 import { useState } from "react";
+import { VoiceRecorder } from "@/components/voice-recorder";
 
 const AVAILABLE_TAGS = [
   "rainfall",
@@ -23,6 +24,7 @@ type DiaryEntryFormProps = Readonly<{
 
 export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [content, setContent] = useState("");
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -104,12 +106,21 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
         >
           Observation
         </label>
+        <div className="mb-2">
+          <VoiceRecorder
+            onTranscript={(text) =>
+              setContent((prev) => (prev ? prev + " " + text : text))
+            }
+          />
+        </div>
         <textarea
           id="content"
           name="content"
           rows={6}
           required
           placeholder="What happened on the ranch today?"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
           className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
         />
       </div>
