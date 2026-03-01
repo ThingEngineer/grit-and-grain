@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { InstallAppMenuItem } from "@/components/install-app-menu-item";
 
 type ProfileMenuProps = Readonly<{
   userName: string;
@@ -145,6 +146,7 @@ export function ProfileMenu({ userName }: ProfileMenuProps) {
             Account
           </Link>
           <div className="my-1 border-t border-border" />
+          <InstallAppMenuItem onClose={() => setOpen(false)} />
           <form action="/api/auth/sign-out" method="POST">
             <button
               type="submit"

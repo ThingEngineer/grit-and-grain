@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Nav } from "@/components/nav";
 import { OfflineProvider } from "@/components/offline-provider";
 import { OfflineBanner } from "@/components/offline-banner";
+import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
 
 export default async function AuthenticatedLayout({
   children,
@@ -39,6 +40,7 @@ export default async function AuthenticatedLayout({
         </a>
         <Nav userName={userName} />
         <OfflineBanner />
+        <PwaInstallPrompt />
         <main
           id="main-content"
           tabIndex={-1}
