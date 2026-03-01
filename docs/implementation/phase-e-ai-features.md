@@ -155,17 +155,30 @@ export function formatEntryForRag(entry: FormatEntryInput): string {
 
 #### `lib/rag/search.ts` — Vector search wrapper
 
+> **Critical:** Use `createAdminClient()` (service-role key) so the search works regardless of
+> auth context. The caller is responsible for passing the correct `profileId`. Also,
+> PostgREST does **not** automatically cast a JavaScript `number[]` to the pgvector `vector`
+> type — you must pass `JSON.stringify(embedding)` as a string. Passing the raw array silently
+> returns 0 results with no error.
+>
+> **Threshold note:** `openai/text-embedding-3-small` produces cosine similarities of
+> **0.30–0.48** for typical short-question → diary-narrative matches. A threshold of `0.72`
+> (or even `0.5`) will silently return nothing for most questions. Use `0.3`.
+
 ```typescript
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { embed } from "ai";
 import { embeddingModel } from "@/lib/ai/gateway";
 
 export async function searchDiaryEntries(
   question: string,
   topK = 8,
-  threshold = 0.72,
+  threshold = 0.3,
+  profileId?: string,
 ) {
-  const supabase = await createClient();
+  // Use admin client to bypass RLS — the caller (chat route) is responsible
+  // for authenticating the user and passing the correct profileId.
+  const supabase = createAdminClient();
 
   // Generate embedding for the question
   const { embedding } = await embed({
@@ -173,15 +186,18 @@ export async function searchDiaryEntries(
     value: question,
   });
 
-  // Call the match_diary_entries Postgres function
+  // Call the match_diary_entries Postgres function.
+  // IMPORTANT: Pass the embedding as JSON.stringify() — PostgREST requires the
+  // vector value as a string "[0.1,0.2,...]". A raw JS array is silently ignored.
   const { data, error } = await supabase.rpc("match_diary_entries", {
-    query_embedding: embedding,
+    query_embedding: JSON.stringify(embedding),
     match_threshold: threshold,
     match_count: topK,
+    ...(profileId ? { p_profile_id: profileId } : {}),
   });
 
   if (error) throw error;
-  return data;
+  return data ?? [];
 }
 ```
 
@@ -261,32 +277,60 @@ Create `app/api/ai/chat/route.ts`:
 
 **Flow:**
 
-1. Receive `{ messages }` (chat history) in request body
-2. Extract the latest user message
-3. Call `searchDiaryEntries()` to get relevant context
-4. Format context passages for the prompt
-5. Stream response from Anthropic Claude with the RAG system prompt
+1. Authenticate the user — required because `searchDiaryEntries` uses the admin client and needs an explicit `profileId`
+2. Receive `{ messages }` (chat history) in request body
+3. Extract the latest user message
+4. Call `searchDiaryEntries()` with the user's ID to get relevant context
+5. Format context passages for the prompt
+6. Stream response from Anthropic Claude with the RAG system prompt
 
 ```typescript
-import { streamText } from "ai";
+import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import { chatModel } from "@/lib/ai/gateway";
 import { searchDiaryEntries } from "@/lib/rag/search";
 import { FARM_MEMORY_SYSTEM_PROMPT } from "@/lib/ai/prompts";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
-  const { messages } = await request.json();
-  const lastUserMessage = messages.filter((m: any) => m.role === "user").pop();
+  // Authenticate user — needed to scope the RAG search to their entries
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-  // Retrieve relevant diary entries
-  const entries = await searchDiaryEntries(lastUserMessage.content);
+  const { messages }: { messages: UIMessage[] } = await request.json();
+  const lastUserMessage = messages.filter((m) => m.role === "user").pop();
+  const lastUserMessageText = lastUserMessage?.parts
+    .filter((p) => p.type === "text")
+    .map((p) => p.text)
+    .join("\n")
+    .trim();
+
+  if (!lastUserMessageText) {
+    return Response.json({ error: "No user message found" }, { status: 400 });
+  }
+
+  // Retrieve relevant diary entries via vector search
+  const entries = await searchDiaryEntries(
+    lastUserMessageText,
+    8,
+    0.3,
+    user.id,
+  );
 
   // Format context for the prompt
-  const contextPassages = entries
-    .map(
-      (e: any, i: number) =>
-        `[Entry #${i + 1}]\n${e.content_for_rag}\n(Similarity: ${e.similarity.toFixed(2)})`,
-    )
-    .join("\n\n---\n\n");
+  const contextPassages =
+    entries.length > 0
+      ? entries
+          .map(
+            (e, i) =>
+              `[Entry #${i + 1}]\n${e.content_for_rag}\n(Similarity: ${e.similarity.toFixed(2)})`,
+          )
+          .join("\n\n---\n\n")
+      : "No relevant diary entries found.";
+
+  const modelMessages = await convertToModelMessages(messages);
 
   // Stream the response
   const result = streamText({
@@ -295,7 +339,7 @@ export async function POST(request: Request) {
       "{{ context_passages }}",
       contextPassages,
     ),
-    messages,
+    messages: modelMessages,
   });
 
   return result.toUIMessageStreamResponse();

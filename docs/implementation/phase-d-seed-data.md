@@ -91,20 +91,20 @@ Create entries spanning **March 2025 – February 2026** (12 months leading up t
 
 **Target: 30–50 entries** covering a realistic yearly cycle:
 
-| Month        | Key Events to Seed                                                        |
-| ------------ | ------------------------------------------------------------------------- |
-| **Mar 2025** | Spring green-up starting. First rotation move. Calving season begins.     |
-| **Apr 2025** | Active calving. Moved pairs to North Pasture. Light rain.                 |
-| **May 2025** | Good grass growth. First hay cut on East Hay Field. Brand/tag new calves. |
-| **Jun 2025** | Peak growth. Rotated to South Pasture. Adequate rainfall.                 |
-| **Jul 2025** | Summer slump beginning. Grass thinning on South. Moved back to North.     |
-| **Aug 2025** | Dry month. Rested South Pasture 28 days. Minimal rain (0.8 in total).     |
-| **Sep 2025** | Second hay cut on East. Fall recovery on South. Rain returns.             |
-| **Oct 2025** | Weaned calves. Sold yearlings. Good pasture condition.                    |
-| **Nov 2025** | Stockpiled fescue on North. Started supplementing yearlings.              |
-| **Dec 2025** | Winter feeding begins. 4 bales/week to cow-calf herd. Cold snap.          |
-| **Jan 2026** | Heavy hay feeding (6 bales/week). Vet check on pregnant cows. Snow.       |
-| **Feb 2026** | Pre-calving prep. Reduced hay slightly. Checking pasture readiness.       |
+| Month        | Key Events to Seed                                                                     |
+| ------------ | -------------------------------------------------------------------------------------- |
+| **Mar 2025** | Spring green-up starting. First rotation move. Calving season begins.                  |
+| **Apr 2025** | Active calving. Moved pairs to North Pasture. Light rain.                              |
+| **May 2025** | Good grass growth. First hay cut on East Hay Field. Brand/tag new calves.              |
+| **Jun 2025** | Peak growth. Rotated to South Pasture. Adequate rainfall.                              |
+| **Jul 2025** | Summer slump beginning. Grass thinning on South. Moved back to North.                  |
+| **Aug 2025** | Dry month. Rested South Pasture 28 days. Minimal rain (0.8 in total).                  |
+| **Sep 2025** | Second hay cut on East. Fall recovery on South. Rain returns.                          |
+| **Oct 2025** | Weaned calves. Sold yearlings. Good pasture condition.                                 |
+| **Nov 2025** | Stockpiled fescue on North. Started supplementing yearlings.                           |
+| **Dec 2025** | Winter feeding begins. 4 bales/week to cow-calf herd. Cold snap.                       |
+| **Jan 2026** | Heavy hay feeding (6 bales/week). Vet check on pregnant cows. Snow.                    |
+| **Feb 2026** | Pre-calving prep. Two rainfall events (0.6" + 0.4"). First calf of year. Pasture walk. |
 
 **Each entry should include:**
 

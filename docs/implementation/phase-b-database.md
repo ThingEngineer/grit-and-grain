@@ -234,10 +234,18 @@ create index idx_entry_embeddings_hnsw
 
 ### B.10 — Create `match_diary_entries` function
 
+> **Threshold note:** `openai/text-embedding-3-small` produces cosine similarities of
+> **0.30–0.48** for typical short-question → diary-narrative matches. Use `0.3` as the
+> default — a higher value like `0.5` or `0.72` will silently return no results for most
+> real-world questions.
+>
+> **`set search_path` is required:** Because pgvector is installed in the `extensions`
+> schema, you must set `search_path` so the function can resolve `extensions.vector`.
+
 ```sql
 create or replace function public.match_diary_entries (
-  query_embedding vector(1536),
-  match_threshold float default 0.72,
+  query_embedding extensions.vector(1536),
+  match_threshold float default 0.3,
   match_count int default 8,
   p_profile_id uuid default auth.uid()
 )
@@ -248,12 +256,13 @@ returns table (
   similarity float
 )
 language sql stable
+set search_path = 'public', 'extensions'
 as $$
   select
     ee.id,
     ee.entry_id,
     ee.content_for_rag,
-    1 - (ee.embedding <=> query_embedding) as similarity
+    (1 - (ee.embedding <=> query_embedding))::float as similarity
   from public.entry_embeddings ee
   where ee.profile_id = p_profile_id
     and ee.embedding is not null
