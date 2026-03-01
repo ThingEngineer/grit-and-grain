@@ -60,15 +60,21 @@ export async function POST(request: Request) {
           .join("\n\n---\n\n")
       : "No relevant diary entries found.";
 
-  const modelMessages = await convertToModelMessages(
-    messages.map((message) => {
-      return {
-        role: message.role,
-        parts: message.parts,
-        metadata: message.metadata,
-      };
+  // Strip providerMetadata from parts before converting to model messages.
+  // When using the OpenAI-compatible gateway to reach Anthropic, the SDK stores
+  // an `openai.itemId` on each assistant turn (Responses API). On the next request
+  // convertToModelMessages would emit an item-reference instead of the full text,
+  // which the gateway/Anthropic doesn't understand, causing ERR_ABORTED.
+  const cleanedMessages = messages.map((message) => ({
+    role: message.role,
+    parts: message.parts.map((part) => {
+      const cleaned = { ...part };
+      delete (cleaned as Record<string, unknown>).providerMetadata;
+      return cleaned;
     }),
-  );
+  }));
+
+  const modelMessages = await convertToModelMessages(cleanedMessages);
 
   // Stream the response
   const result = streamText({
