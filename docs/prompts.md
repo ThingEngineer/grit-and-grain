@@ -2,12 +2,26 @@
 
 > **Runtime:** All prompts are executed through [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) using the [Vercel AI SDK](https://sdk.vercel.ai/) (`ai` package).
 >
-> - **Text generation** — Anthropic Claude (via Vercel AI Gateway, e.g., `anthropic/claude-4.6-sonnet`, configurable via `NEXT_PUBLIC_AI_CHAT_MODEL`)
+> - **Text generation** — Anthropic Claude (via Vercel AI Gateway, e.g., `anthropic/claude-sonnet-4.6`, configurable via `NEXT_PUBLIC_AI_CHAT_MODEL`)
 > - **Embeddings** — OpenAI `text-embedding-3-small` (via Vercel AI Gateway, e.g., `openai/text-embedding-3-small`, configurable via `NEXT_PUBLIC_AI_EMBEDDING_MODEL`)
 > - **Gateway Authentication** — Uses a single `VERCEL_AI_GATEWAY_API_KEY` for all model access
 > - **Available Models:** See full list at [Vercel AI Gateway Models](https://vercel.com/docs/ai-gateway/available-models)
 >
-> Route handlers: `POST /api/ai/chat`, `POST /api/ai/weekly-review`, `POST /api/ai/embed`
+> Route handlers: `POST /api/ai/chat`, `POST /api/ai/weekly-review`, `POST /api/ai/embed`, `POST /api/ai/extract`
+
+---
+
+## Pipeline Overview
+
+The four prompts in this document form a sequential AI pipeline triggered every time a rancher records a voice note or asks a question:
+
+1. **Voice-to-text** — Raw audio is transcribed client-side (Web Speech API) or server-side (Whisper fallback).
+2. **NLP Entity Extraction** (Prompt 4) — The raw transcript is tagged with pasture names, herd groups, observation categories, and resolved dates before the entry is written to the database.
+3. **Embedding** — The canonical `content_for_rag` string (Prompt 3 format) is embedded via OpenAI `text-embedding-3-small` and stored in the longitudinal vector database alongside the diary entry.
+4. **RAG Retrieval + Generation** (Prompt 1) — When the rancher asks a question, the most semantically relevant diary entries are retrieved via cosine similarity and injected as grounded context into the Farm Memory chat prompt.
+5. **Weekly Review** (Prompt 2) — On demand, all entries for the selected date range are passed to the Weekly Review prompt to produce a structured, cited summary.
+
+This pipeline ensures that every voice note spoken today enriches the historical knowledge base available for retrieval next season.
 
 ---
 
@@ -101,7 +115,7 @@ Before sending the Weekly Review to the user, the route handler performs these a
 - [ ] "Trends to Watch" bullets are flagged as observations, not instructions (use "worth monitoring" language).
 - [ ] If `weekly_entries` is empty or fewer than 2 entries, substitute the fixed message: _"Not enough entries this week to generate a review. Keep logging!"_
 
-### Expected Output Structure (judge-optimised)
+### Production Output Structure
 
 The Weekly Review route handler renders the AI output in a structured format:
 
