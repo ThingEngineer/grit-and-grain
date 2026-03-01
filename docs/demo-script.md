@@ -77,5 +77,5 @@
 ## Q&A Prompts (if time allows)
 
 - _"What happens to my voice recordings?"_ → Transcribed and discarded; only text is stored.
-- _"Does it work offline?"_ → Not in MVP; offline sync is on the roadmap.
+- _"Does it work offline?"_ → Yes. The app installs as a PWA and caches all pages for offline browsing. Any diary entries, pasture changes, or herd updates you make without signal are queued locally and sync automatically the moment you reconnect. AI features (Farm Memory, Weekly Review) show a "Reconnect for insights" message but everything else keeps working.
 - _"How does the AI know which pasture I'm talking about?"_ → NLP entity extraction recognises pasture names from your profile; you can also tap to confirm or correct the auto-tag.

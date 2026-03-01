@@ -14,6 +14,7 @@
 - Read-aloud responses for hands-free field use
 - Vercel AI Gateway (unified Anthropic + OpenAI routing)
 - Supabase Auth + RLS (email/password, cascading deletes)
+- **Offline-first PWA** — installable, service worker page caching, IndexedDB write queue with auto-sync on reconnect (Phase 1.1 ✅)
 
 ---
 
@@ -21,16 +22,16 @@
 
 _Goal: make the app genuinely usable in a no-signal, muddy-hands environment._
 
-### 1.1 Offline-First Form Entry & Background Sync ⭐ (in progress)
+### 1.1 Offline-First Form Entry & Background Sync ✅ Complete
 
-> **Note:** Full offline support for all form entry (diary, pastures, herds) with automatic sync on reconnect is actively being developed.
-
-- Install-as-PWA (Web App Manifest + service worker)
-- IndexedDB queue for all write operations made while offline (diary entries, pasture edits, herd updates)
-- Background sync via the [Background Sync API](https://developer.chrome.com/docs/workbox/modules/workbox-background-sync/) — queue drains the moment connectivity is restored
-- Offline indicator in the nav; per-form "pending sync" badge on unsynced entries
-- Conflict resolution strategy: last-write-wins per row with server timestamp; surface conflicts to user if simultaneous edits detected
-- Offline read access: cache most-recent diary entries and pasture/herd data in service worker for browsing without connectivity
+- [x] Install-as-PWA (Web App Manifest + vanilla service worker; Serwist excluded — incompatible with Next.js Turbopack)
+- [x] IndexedDB write queue (`idb-keyval`) for all form submissions made offline (diary entries, pasture CRUD, herd CRUD, profile updates)
+- [x] Auto-flush on reconnect via `POST /api/offline/sync` — queue drains the moment connectivity is restored; new diary entries trigger embedding automatically
+- [x] Offline banner with pending-operation count; stale-content notice
+- [x] Offline read access — service worker caches all 8 authenticated pages (network-first with RSC proactive caching; falls back to cached HTML)
+- [x] AI features (Farm Memory, Weekly Review) gracefully disabled offline with "Reconnect for insights" inline message
+- [ ] Conflict resolution UI — current strategy is last-write-wins; surface conflicts to user if simultaneous edits are detected _(future polish)_
+- [ ] Per-entry "pending sync" badge on unsynced diary cards _(future polish)_
 
 ### 1.2 Photo Attachments on Diary Entries
 

@@ -33,6 +33,7 @@ General-purpose voice assistants and note apps don't understand ranch operations
 | **Farm Memory chat**          | RAG-powered chat that retrieves relevant historical context from the longitudinal vector database and answers questions grounded in _your_ data. Responses can be read aloud for hands-free use in the field |
 | **Weekly Review**             | AI-generated summary of the week's entries with cited sources and trend analysis. Read responses aloud for field-friendly access                                                                             |
 | **Pasture & herd management** | Add/edit pastures and herd groups; link diary entries to them                                                                                                                                                |
+| **Offline-first PWA**         | Installable as a Progressive Web App. All pages cached by a service worker for offline browsing. Write operations (diary entries, pasture/herd changes) queued in IndexedDB and auto-synced on reconnect     |
 
 > **Hands-free in the field:** Voice capture + read-aloud responses create a fully natural, no-hands workflow. Speak your observations, ask questions, and listen to answers while managing livestock or moving through pastures.
 
@@ -98,6 +99,20 @@ All AI features are implemented using the [Vercel AI SDK](https://sdk.vercel.ai/
 - **Model routing** — Reference models by their gateway IDs (e.g., `anthropic/claude-opus-4.5`, `openai/text-embedding-3-small`)
 - **Features** — Automatic retries, usage observability, rate-limit management, and a single billing surface
 
+### Offline Architecture
+
+The app is fully functional without a network connection:
+
+| Layer                | Technology                                                              | Role                                                                                                |
+| -------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| **Service worker**   | Vanilla JS (`public/sw.js`)                                             | Network-first page caching with RSC-aware proactive HTML caching; cache-first for static assets     |
+| **Write queue**      | [`idb-keyval`](https://github.com/jakearchibald/idb-keyval) (IndexedDB) | Serialises all CRUD operations while offline; auto-flushes to `POST /api/offline/sync` on reconnect |
+| **Online detection** | `useSyncExternalStore` + `navigator.onLine` + `/api/health` ping        | SSR-safe; supplements the browser flag with a real connectivity check                               |
+| **Offline UI**       | `OfflineProvider` context + animated `OfflineBanner`                    | Amber banner with pending-op count and stale-content notice; blue → green transition on sync        |
+| **AI guards**        | Inline disabled state                                                   | Farm Memory chat input and Weekly Review button replaced with "Reconnect for insights" when offline |
+
+Supported offline operation types: `create_entry`, `create_pasture`, `delete_pasture`, `create_herd`, `delete_herd`, `update_profile`. Newly queued diary entries trigger embedding generation automatically after sync.
+
 ### Why Longitudinal Matters
 
 A single-season tool is a novelty. Grit & Grain is designed so that every entry you make today enriches the historical context available next year and the year after. The vector store accumulates a multi-year record of seasonal decisions, letting the AI answer questions like _"Has the south pasture ever produced a second cut in a dry year?"_ with real citations from your own history.
@@ -144,14 +159,14 @@ Key tables: `profiles`, `pastures`, `herd_groups`, `diary_entries`, `weekly_revi
 
 ## Post-MVP Roadmap
 
-| Feature                              | Notes                                                                                                                  |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| **Maps / GIS**                       | Visualise pastures on a satellite base map; draw boundary polygons                                                     |
-| **Offline sync**                     | PWA with local-first storage (PGlite or SQLite) that syncs when connectivity is restored—critical for remote ranch use |
-| **True pasture biomass measurement** | Integrate with rising-plate meter or drone NDVI imagery for objective forage estimation                                |
-| **Import from sensors**              | Ingest weather-station CSV / API feeds (rainfall, temperature, humidity) automatically into diary timeline             |
-| **Multi-operator permissions**       | Role-based access (owner, manager, worker) so a ranch crew can share one account with appropriate write controls       |
-| **Export & data portability**        | Download full diary as PDF or CSV; interoperability with other farm-management platforms                               |
+| Feature                              | Notes                                                                                                            |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| **Maps / GIS**                       | Visualise pastures on a satellite base map; draw boundary polygons                                               |
+| **Offline sync** ✅                  | Shipped — installable PWA, service worker page caching, IndexedDB write queue with auto-sync on reconnect        |
+| **True pasture biomass measurement** | Integrate with rising-plate meter or drone NDVI imagery for objective forage estimation                          |
+| **Import from sensors**              | Ingest weather-station CSV / API feeds (rainfall, temperature, humidity) automatically into diary timeline       |
+| **Multi-operator permissions**       | Role-based access (owner, manager, worker) so a ranch crew can share one account with appropriate write controls |
+| **Export & data portability**        | Download full diary as PDF or CSV; interoperability with other farm-management platforms                         |
 
 ---
 
