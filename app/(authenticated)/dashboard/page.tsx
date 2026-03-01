@@ -54,13 +54,13 @@ export default async function DashboardPage() {
       {/* Quick stats */}
       <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div className="rounded-lg border border-border bg-card p-4">
-          <p className="font-serif font-serif text-2xl font-bold text-foreground">
+          <p className="font-serif text-2xl font-bold text-foreground">
             {entryCount ?? 0}
           </p>
           <p className="text-sm text-muted-foreground">Diary entries</p>
         </div>
         <div className="rounded-lg border border-border bg-card p-4">
-          <p className="font-serif font-serif text-2xl font-bold text-foreground">
+          <p className="font-serif text-2xl font-bold text-foreground">
             {pastureCount ?? 0}
           </p>
           <p className="text-sm text-muted-foreground">Pastures</p>
@@ -80,7 +80,7 @@ export default async function DashboardPage() {
 
       {/* Recent diary entries */}
       <div>
-        <h2 className="mb-4 font-serif font-serif text-lg font-semibold text-foreground">
+        <h2 className="mb-4 font-serif text-lg font-semibold text-foreground">
           Recent entries
         </h2>
         {hasEntries && entries && entries.length > 0 ? (

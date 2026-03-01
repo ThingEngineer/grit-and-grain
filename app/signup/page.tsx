@@ -49,7 +49,7 @@ export default function SignUpPage() {
         </h1>
 
         {error && (
-          <p className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
+          <p className="mb-4 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
             {error}
           </p>
         )}

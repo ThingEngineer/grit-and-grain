@@ -76,9 +76,7 @@ export function SeedButton(props: Readonly<{ hasEntries?: boolean }>) {
           {loading ? "Removing…" : "🗑 Remove Demo Data"}
         </button>
       )}
-      {error && (
-        <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-      )}
+      {error && <p className="text-sm text-destructive">{error}</p>}
       {success && (
         <p className="text-sm text-green-600 dark:text-green-400">{success}</p>
       )}

@@ -136,7 +136,7 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
 
         {/* Error */}
         {error && (
-          <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-400">
+          <div className="mb-4 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
             {error}
           </div>
         )}
@@ -152,7 +152,7 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
 
         {/* Review content */}
         {displayMd && !isLoading && (
-          <div className="prose max-w-none rounded-lg border border-border bg-card p-6">
+          <div className="prose max-w-none dark:prose-invert rounded-lg border border-border bg-card p-6">
             <Markdown>{displayMd}</Markdown>
           </div>
         )}

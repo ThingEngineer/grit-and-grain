@@ -90,15 +90,9 @@ export default async function PasturesPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-muted">
               <tr>
-                <th className="px-4 py-3 font-medium text-foreground">
-                  Name
-                </th>
-                <th className="px-4 py-3 font-medium text-foreground">
-                  Acres
-                </th>
-                <th className="px-4 py-3 font-medium text-foreground">
-                  Notes
-                </th>
+                <th className="px-4 py-3 font-medium text-foreground">Name</th>
+                <th className="px-4 py-3 font-medium text-foreground">Acres</th>
+                <th className="px-4 py-3 font-medium text-foreground">Notes</th>
                 <th className="px-4 py-3 font-medium text-foreground">
                   <span className="sr-only">Actions</span>
                 </th>
@@ -121,7 +115,7 @@ export default async function PasturesPage() {
                       <input type="hidden" name="id" value={pasture.id} />
                       <button
                         type="submit"
-                        className="text-xs text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                        className="text-xs text-destructive hover:text-destructive/80"
                       >
                         Delete
                       </button>

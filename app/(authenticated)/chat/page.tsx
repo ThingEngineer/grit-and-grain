@@ -83,7 +83,7 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-[calc(100vh-8rem)] flex-col">
-      <h1 className="mb-4 font-serif font-serif text-2xl font-bold text-foreground">
+      <h1 className="mb-4 font-serif text-2xl font-bold text-foreground">
         Farm Memory
       </h1>
       <p className="mb-4 text-sm text-muted-foreground">
@@ -130,7 +130,7 @@ export default function ChatPage() {
               {m.role === "user" ? (
                 <div className="whitespace-pre-wrap">{m.text}</div>
               ) : (
-                <div className="prose prose-sm max-w-none prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-li:my-0">
+                <div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-li:my-0">
                   <Markdown>{m.text}</Markdown>
                 </div>
               )}
@@ -147,7 +147,7 @@ export default function ChatPage() {
         )}
 
         {error && (
-          <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-400">
+          <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
             {errorMessage}
           </div>
         )}
