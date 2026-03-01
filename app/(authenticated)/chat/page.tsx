@@ -6,6 +6,7 @@ import { useChat } from "@ai-sdk/react";
 import Markdown from "react-markdown";
 import { checkTopicRelevance } from "@/lib/ai/topic-guard";
 import { ReadAloudButton } from "@/components/read-aloud-button";
+import { VoiceRecorder } from "@/components/voice-recorder";
 import { useOffline } from "@/components/offline-provider";
 import { WifiOff } from "lucide-react";
 
@@ -182,6 +183,14 @@ export default function ChatPage() {
               {topicWarning}
             </p>
           )}
+          <div className="mb-2">
+            <VoiceRecorder
+              label="Ask by voice"
+              onTranscript={(text) =>
+                handleInputChange(input ? input + " " + text : text)
+              }
+            />
+          </div>
           <div className="flex gap-2">
             <input
               id="chat-input"

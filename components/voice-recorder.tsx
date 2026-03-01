@@ -4,9 +4,13 @@ import { useState, useRef } from "react";
 
 type VoiceRecorderProps = Readonly<{
   onTranscript: (text: string) => void;
+  label?: string;
 }>;
 
-export function VoiceRecorder({ onTranscript }: VoiceRecorderProps) {
+export function VoiceRecorder({
+  onTranscript,
+  label = "Record note",
+}: VoiceRecorderProps) {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const recognitionRef = useRef<{ stop: () => void } | null>(null);
@@ -70,7 +74,7 @@ export function VoiceRecorder({ onTranscript }: VoiceRecorderProps) {
           </>
         ) : (
           <>
-            <span aria-hidden="true">🎙</span> Record note
+            <span aria-hidden="true">🎙</span> {label}
           </>
         )}
       </button>
