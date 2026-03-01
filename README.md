@@ -20,13 +20,15 @@ Existing farm-management apps demand structured data entry—spreadsheets, forms
 
 > All features require authentication (sign-up / sign-in required).
 
-| Feature                       | Description                                                                                                                                     |
-| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Voice capture**             | Record a voice note from any browser; transcribed automatically via voice-to-text                                                               |
-| **Diary entries**             | Timestamped entries stored per pasture or herd group                                                                                            |
-| **Farm Memory chat**          | RAG-powered chat that retrieves relevant historical context from the longitudinal vector database and answers questions grounded in _your_ data |
-| **Weekly Review**             | AI-generated summary of the week's entries with cited sources and trend analysis                                                                |
-| **Pasture & herd management** | Add/edit pastures and herd groups; link diary entries to them                                                                                   |
+| Feature                       | Description                                                                                                                                                                                                  |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Voice capture**             | Record a voice note from any browser; transcribed automatically via voice-to-text                                                                                                                            |
+| **Diary entries**             | Timestamped entries stored per pasture or herd group                                                                                                                                                         |
+| **Farm Memory chat**          | RAG-powered chat that retrieves relevant historical context from the longitudinal vector database and answers questions grounded in _your_ data. Responses can be read aloud for hands-free use in the field |
+| **Weekly Review**             | AI-generated summary of the week's entries with cited sources and trend analysis. Read responses aloud for field-friendly access                                                                             |
+| **Pasture & herd management** | Add/edit pastures and herd groups; link diary entries to them                                                                                                                                                |
+
+> **Hands-free in the field:** Voice capture + read-aloud responses create a fully natural, no-hands workflow. Speak your observations, ask questions, and listen to answers while managing livestock or moving through pastures.
 
 ---
 
