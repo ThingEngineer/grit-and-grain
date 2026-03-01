@@ -141,7 +141,7 @@ export default function SignUpPage() {
                 type="email"
                 required
                 autoComplete="email"
-                className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="rounded-lg border border-border bg-background px-3 py-2 text-base text-foreground outline-none focus:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:text-sm"
               />
             </div>
 
@@ -159,7 +159,7 @@ export default function SignUpPage() {
                 required
                 autoComplete="new-password"
                 minLength={6}
-                className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="rounded-lg border border-border bg-background px-3 py-2 text-base text-foreground outline-none focus:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:text-sm"
               />
             </div>
 
