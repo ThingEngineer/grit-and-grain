@@ -1,19 +1,89 @@
 import { createClient } from "@/lib/supabase/server";
 import { DiaryEntryCard } from "@/components/diary-entry-card";
+import { DiaryFilters } from "@/components/diary-filters";
 import { EmptyState } from "@/components/empty-state";
 import Link from "next/link";
+import { Suspense } from "react";
 
-export default async function DiaryListPage() {
+type SearchParams = Promise<{
+  q?: string;
+  pasture?: string;
+  herd?: string;
+  tag?: string;
+  from?: string;
+  to?: string;
+}>;
+
+export default async function DiaryListPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: entries } = await supabase
+  const { q, pasture, herd, tag, from, to } = await searchParams;
+
+  // Fetch pastures, herd groups and all entries in parallel
+  const [pasturesResult, herdsResult, allEntriesResult] = await Promise.all([
+    supabase
+      .from("pastures")
+      .select("id, name")
+      .eq("profile_id", user!.id)
+      .order("name"),
+    supabase
+      .from("herd_groups")
+      .select("id, name")
+      .eq("profile_id", user!.id)
+      .order("name"),
+    supabase
+      .from("diary_entries")
+      .select("id, tags")
+      .eq("profile_id", user!.id),
+  ]);
+
+  const pastures = pasturesResult.data ?? [];
+  const herdGroups = herdsResult.data ?? [];
+
+  // Collect all unique tags across all entries
+  const allTags = Array.from(
+    new Set((allEntriesResult.data ?? []).flatMap((e) => e.tags ?? [])),
+  ).sort() as string[];
+
+  const totalCount = allEntriesResult.data?.length ?? 0;
+
+  // Build filtered query
+  let query = supabase
     .from("diary_entries")
     .select("*, pastures(name), herd_groups(name)")
     .eq("profile_id", user!.id)
     .order("entry_date", { ascending: false });
+
+  if (q) {
+    query = query.ilike("content", `%${q}%`);
+  }
+  if (pasture) {
+    query = query.eq("pasture_id", pasture);
+  }
+  if (herd) {
+    query = query.eq("herd_group_id", herd);
+  }
+  if (tag) {
+    query = query.contains("tags", [tag]);
+  }
+  if (from) {
+    query = query.gte("entry_date", from);
+  }
+  if (to) {
+    query = query.lte("entry_date", to);
+  }
+
+  const { data: entries } = await query;
+  const filteredCount = entries?.length ?? 0;
+
+  const hasFilters = q || pasture || herd || tag || from || to;
 
   return (
     <div>
@@ -27,6 +97,18 @@ export default async function DiaryListPage() {
         >
           + New entry
         </Link>
+      </div>
+
+      <div className="mb-6">
+        <Suspense>
+          <DiaryFilters
+            pastures={pastures}
+            herdGroups={herdGroups}
+            allTags={allTags}
+            totalCount={totalCount}
+            filteredCount={filteredCount}
+          />
+        </Suspense>
       </div>
 
       {entries && entries.length > 0 ? (
@@ -49,9 +131,13 @@ export default async function DiaryListPage() {
         </div>
       ) : (
         <EmptyState
-          message="No diary entries yet. Start recording your ranch observations."
-          actionLabel="Create your first entry"
-          actionHref="/diary/new"
+          message={
+            hasFilters
+              ? "No entries match your filters."
+              : "No diary entries yet. Start recording your ranch observations."
+          }
+          actionLabel={hasFilters ? undefined : "Create your first entry"}
+          actionHref={hasFilters ? undefined : "/diary/new"}
         />
       )}
     </div>
