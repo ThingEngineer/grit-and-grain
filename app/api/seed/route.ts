@@ -71,6 +71,48 @@ function buildDiaryEntries(
   const yearlings = herdIds["Yearling Steers"];
 
   return [
+    // ---- Summer 2023 (dry year — historical reference) ----
+    {
+      entry_date: "2023-06-20",
+      pasture_id: south,
+      herd_group_id: null,
+      content:
+        "Rain has been almost nonexistent this month — only 0.3 inches all of June. South Pasture warm-season grasses are holding up better than expected. The bermuda is still thick enough that we're thinking about taking a first hay cut off it rather than grazing. East Hay Field first cut is already done. This would be the first time we've cut South for hay.",
+      tags: ["hay", "pasture_check", "rainfall"],
+    },
+    {
+      entry_date: "2023-07-08",
+      pasture_id: south,
+      herd_group_id: null,
+      content:
+        "Cut South Pasture for hay today — first time we've ever done that. The dry conditions actually worked in our favor: bermuda mat was dense and stood up well for cutting. No rain forecast so we should be able to cure it without trouble. Hoping for 30–35 bales.",
+      tags: ["hay", "pasture_check"],
+    },
+    {
+      entry_date: "2023-07-14",
+      pasture_id: south,
+      herd_group_id: null,
+      content:
+        "Baled South Pasture — got 31 round bales off it. Lower protein than the East Hay Field cut (about 7%) but it's dry-matter roughage and we'll take it. This was strictly a response to the drought; normally South is grazing-only. Between the 52 bales from East Hay Field first cut and these 31, we should be okay for winter if the dry weather keeps cutting into fall forage.",
+      tags: ["hay"],
+    },
+    {
+      entry_date: "2023-08-19",
+      pasture_id: south,
+      herd_group_id: null,
+      content:
+        "Surprised by how fast South Pasture regrew after the July cut — we got just enough rain in early August (about 0.9 inches) and the bermuda bounced back. Decided to take a second cut off it today. The stand is thinner than the first cut but still worth baling. Dry year has pushed us into treating South as a dual-purpose pasture for the first time.",
+      tags: ["hay", "rainfall"],
+    },
+    {
+      entry_date: "2023-08-25",
+      pasture_id: south,
+      herd_group_id: null,
+      content:
+        "Finished baling the second cut on South Pasture — 19 round bales. Combined with the first cut (31 bales) that's 50 bales off South this year, which we never expected. The drought forced our hand but it worked out. Won't make a habit of cutting South every year — the bermuda needs rest — but it's good to know it can handle a second cut if conditions line up.",
+      tags: ["hay"],
+    },
+
     // ---- March 2025 ----
     {
       entry_date: "2025-03-05",
