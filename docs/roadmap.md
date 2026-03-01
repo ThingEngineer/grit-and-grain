@@ -193,24 +193,64 @@ _Goal: support ranch crews, family operations, and consulting agronomists._
 
 ---
 
-## Phase 6 — Data Portability & Integrations
+## Phase 6 — Monetization & Billing
+
+_Goal: introduce sustainable revenue through tiered subscription plans without gate-keeping core functionality for small operators._
+
+### 6.1 Stripe Subscription Plans
+
+- Integrate [Stripe Billing](https://stripe.com/billing) via the official `stripe` Node.js SDK
+- Three tiers: **Free** (solo rancher, limited AI calls/month), **Pro** (unlimited AI, all features), **Enterprise** (multi-ranch, RBAC, white-label)
+- Subscription state stored in `profiles.subscription_tier` and `profiles.stripe_customer_id`
+- Webhooks (`/api/webhooks/stripe`) handle `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`, and `invoice.payment_failed`
+- RLS policies gate premium features on `subscription_tier`; graceful degradation in the UI for free-tier users
+
+### 6.2 Checkout & Customer Portal
+
+- Stripe Checkout (hosted page) for new subscriptions — no PCI scope on our servers
+- Stripe Customer Portal link in Account Settings for self-serve plan changes, payment method updates, and cancellations
+- Trial period (14 days Pro) on first signup; trial expiry reminder email via Resend
+
+### 6.3 Usage-Based AI Metering
+
+- Track AI token consumption per user per billing cycle in `ai_usage_log` table
+- Free tier: 50 Farm Memory queries + 4 Weekly Reviews per month; overage upsell prompt
+- Pro tier: unlimited; Enterprise tier: pooled across all ranch profiles under one account
+- Usage dashboard in Account Settings showing current-cycle consumption vs. limits
+
+### 6.4 Billing UI & Upgrade Flows
+
+- Pricing page (`/pricing`) with feature comparison table
+- Inline upgrade prompts when a free-tier user hits a gated feature ("Unlock unlimited AI with Pro →")
+- Current plan badge and next billing date displayed in the profile menu
+- Cancellation flow with retention offer (1-month discount)
+
+### 6.5 Revenue & Churn Analytics
+
+- Stripe-native dashboards for MRR, churn rate, and trial conversion
+- Webhook events forwarded to an analytics sink (Segment / PostHog) for funnel analysis
+- Monthly revenue snapshot stored in a `billing_snapshots` table for internal reporting
+
+---
+
+## Phase 7 — Data Portability & Integrations
 
 _Goal: Grit & Grain should be a hub, not a silo._
 
-### 6.1 Export
+### 7.1 Export
 
 - Full diary export as PDF (formatted) or CSV
 - Annual report PDF: rainfall, rotation summary, health events, weight performance
 - Export embeddings as JSON for data portability / model migration
 
-### 6.2 Sensor & Device Integrations
+### 7.2 Sensor & Device Integrations
 
 - Weather-station CSV / API import (Davis Instruments, Onset HOBO, etc.)
 - Electronic ID (EID) stick-reader Bluetooth import for rapid animal lookup
 - Rising-plate meter integration for objective pasture biomass measurement
 - Drone NDVI imagery upload → auto-mapped to pasture polygons
 
-### 6.3 Third-Party Platform Interoperability
+### 7.3 Third-Party Platform Interoperability
 
 - Import from AgriWebb, MLA Feedback, or HerdDogg CSV exports
 - Zapier / Make webhook trigger on new diary entry (for custom automations)
