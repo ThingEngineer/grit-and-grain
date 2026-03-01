@@ -21,7 +21,8 @@ export async function updateEmail(formData: FormData) {
   const { error } = await supabase.auth.updateUser({ email: newEmail });
 
   if (error) {
-    return redirect(`/account?error=${encodeURIComponent(error.message)}`);
+    console.error("[updateEmail] Auth error:", error.message);
+    return redirect("/account?error=Unable+to+update+email.+Please+try+again.");
   }
 
   return redirect(
@@ -71,7 +72,8 @@ export async function updatePassword(formData: FormData) {
   const { error } = await supabase.auth.updateUser({ password: newPassword });
 
   if (error) {
-    return redirect(`/account?error=${encodeURIComponent(error.message)}`);
+    console.error("[updatePassword] Auth error:", error.message);
+    return redirect("/account?error=Unable+to+update+password.+Please+try+again.");
   }
 
   return redirect("/account?success=Password updated successfully");

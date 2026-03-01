@@ -36,7 +36,8 @@ export async function createEntry(formData: FormData) {
     .single();
 
   if (error) {
-    throw new Error(error.message);
+    console.error("[createEntry] Database error:", error.message);
+    throw new Error("Failed to save diary entry. Please try again.");
   }
 
   // Generate embedding for the new entry (fire-and-forget, don't block redirect)
