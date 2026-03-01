@@ -1,25 +1,35 @@
 "use client";
 
-import { createEntry } from "../actions";
-import { useState, useTransition, useRef } from "react";
+import { updateEntry } from "../../actions";
+import { useState, useTransition } from "react";
 import { VoiceRecorder } from "@/components/voice-recorder";
-import { useOffline } from "@/components/offline-provider";
+import Link from "next/link";
 import { AVAILABLE_TAGS, tagLabel } from "@/lib/diary/tags";
 
-type DiaryEntryFormProps = Readonly<{
+type DiaryEntryEditFormProps = Readonly<{
+  entryId: string;
+  initialDate: string;
+  initialContent: string;
+  initialPastureId: string | null;
+  initialHerdGroupId: string | null;
+  initialTags: string[];
   pastures: { id: string; name: string }[];
   herdGroups: { id: string; name: string }[];
 }>;
 
-export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [content, setContent] = useState("");
-  const { isOnline, enqueue } = useOffline();
+export function DiaryEntryEditForm({
+  entryId,
+  initialDate,
+  initialContent,
+  initialPastureId,
+  initialHerdGroupId,
+  initialTags,
+  pastures,
+  herdGroups,
+}: DiaryEntryEditFormProps) {
+  const [selectedTags, setSelectedTags] = useState<string[]>(initialTags);
+  const [content, setContent] = useState(initialContent);
   const [isPending, startTransition] = useTransition();
-  const [offlineSaved, setOfflineSaved] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const today = new Date().toISOString().split("T")[0];
 
   function toggleTag(tag: string) {
     setSelectedTags((prev) =>
@@ -30,32 +40,13 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-
-    if (isOnline) {
-      startTransition(async () => {
-        await createEntry(formData);
-      });
-    } else {
-      await enqueue({
-        type: "create_entry",
-        data: {
-          entry_date: formData.get("entry_date") as string,
-          content: formData.get("content") as string,
-          pasture_id: (formData.get("pasture_id") as string) || undefined,
-          herd_group_id: (formData.get("herd_group_id") as string) || undefined,
-          tags: selectedTags.length > 0 ? selectedTags : undefined,
-        },
-      });
-      setContent("");
-      setSelectedTags([]);
-      setOfflineSaved(true);
-      formRef.current?.reset();
-      setTimeout(() => setOfflineSaved(false), 4000);
-    }
+    startTransition(async () => {
+      await updateEntry(entryId, formData);
+    });
   }
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} className="max-w-2xl space-y-6">
+    <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
       {/* Date */}
       <div>
         <label
@@ -68,7 +59,7 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
           type="date"
           id="entry_date"
           name="entry_date"
-          defaultValue={today}
+          defaultValue={initialDate}
           required
           className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
         />
@@ -85,6 +76,7 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
         <select
           id="pasture_id"
           name="pasture_id"
+          defaultValue={initialPastureId ?? ""}
           className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
         >
           <option value="">— None —</option>
@@ -107,6 +99,7 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
         <select
           id="herd_group_id"
           name="herd_group_id"
+          defaultValue={initialHerdGroupId ?? ""}
           className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
         >
           <option value="">— None —</option>
@@ -138,7 +131,6 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
           name="content"
           rows={6}
           required
-          placeholder="What happened on the ranch today?"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
@@ -170,28 +162,26 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
             );
           })}
         </div>
-        {/* Hidden inputs for selected tags */}
         {selectedTags.map((tag) => (
           <input key={tag} type="hidden" name="tags" value={tag} />
         ))}
       </div>
 
-      {/* Submit */}
-      <div className="flex flex-col gap-2">
-        <div className="flex gap-3">
-          <button
-            type="submit"
-            disabled={isPending}
-            className="rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
-          >
-            {isPending ? "Saving…" : "Save entry"}
-          </button>
-        </div>
-        {offlineSaved && (
-          <p className="text-xs text-amber-700 dark:text-amber-400">
-            Saved locally — will sync when you reconnect
-          </p>
-        )}
+      {/* Actions */}
+      <div className="flex gap-3">
+        <button
+          type="submit"
+          disabled={isPending}
+          className="rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+        >
+          {isPending ? "Saving…" : "Save changes"}
+        </button>
+        <Link
+          href="/diary"
+          className="rounded-md border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+        >
+          Cancel
+        </Link>
       </div>
     </form>
   );

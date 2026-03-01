@@ -48,6 +48,74 @@ export async function createEntry(formData: FormData) {
   redirect("/dashboard");
 }
 
+export async function updateEntry(entryId: string, formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return redirect("/login");
+  }
+
+  const pastureId = formData.get("pasture_id") as string;
+  const herdGroupId = formData.get("herd_group_id") as string;
+  const tags = formData.getAll("tags") as string[];
+
+  const { data: updatedEntry, error } = await supabase
+    .from("diary_entries")
+    .update({
+      pasture_id: pastureId || null,
+      herd_group_id: herdGroupId || null,
+      entry_date: formData.get("entry_date") as string,
+      content: formData.get("content") as string,
+      tags: tags.length > 0 ? tags : [],
+    })
+    .eq("id", entryId)
+    .eq("profile_id", user.id)
+    .select("*, pastures(name, acres), herd_groups(name, head_count)")
+    .single();
+
+  if (error) {
+    console.error("[updateEntry] Database error:", error.message);
+    throw new Error("Failed to update diary entry. Please try again.");
+  }
+
+  // Regenerate embedding for updated entry (fire-and-forget)
+  if (updatedEntry) {
+    generateEmbedding(updatedEntry).catch(console.error);
+  }
+
+  redirect("/diary");
+}
+
+export async function deleteEntry(entryId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return redirect("/login");
+  }
+
+  // Embedding is removed automatically via CASCADE on diary_entries.id
+  const { error } = await supabase
+    .from("diary_entries")
+    .delete()
+    .eq("id", entryId)
+    .eq("profile_id", user.id);
+
+  if (error) {
+    console.error("[deleteEntry] Database error:", error.message);
+    throw new Error("Failed to delete diary entry. Please try again.");
+  }
+
+  redirect("/diary");
+}
+
 async function generateEmbedding(entry: {
   id: string;
   profile_id: string;

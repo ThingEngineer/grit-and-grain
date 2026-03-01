@@ -68,8 +68,9 @@ describe("DiaryEntryCard", () => {
     render(
       <DiaryEntryCard {...baseProps} tags={["vaccination", "vet-visit"]} />,
     );
-    expect(screen.getByText("vaccination")).toBeInTheDocument();
-    expect(screen.getByText("vet-visit")).toBeInTheDocument();
+    // Tags are displayed with tagLabel formatting (snake_case → sentence case)
+    expect(screen.getByText("Vaccination")).toBeInTheDocument();
+    expect(screen.getByText("Vet-visit")).toBeInTheDocument();
   });
 
   it("renders no tag elements when tags array is empty", () => {
