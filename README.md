@@ -48,7 +48,9 @@ General-purpose voice assistants and note apps don't understand ranch operations
 - **Email:** `demo@gritandgrain.farm`
 - **Password:** `DemoPassword123!`
 
-After logging in, you can populate your account with sample data by clicking the **"Seed Demo Data"** button on the Dashboard page. This will add twelve months of synthetic diary entries for a fictional ranch ("Dry Creek Ranch") covering rainfall observations, pasture rotation, hay cutting notes, and herd health logs.
+> **No email verification required.** Email verification is currently disabled, so you can create a new account with any email address (real or fake) and log in immediately — no inbox check needed.
+
+After logging in, populate your account with sample data by clicking the **"Seed Demo Data"** button on the Dashboard. This will add twelve months of synthetic diary entries for a fictional ranch ("Dry Creek Ranch") covering rainfall observations, pasture rotation, hay cutting notes, and herd health logs.
 
 ---
 
