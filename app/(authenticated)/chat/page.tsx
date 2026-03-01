@@ -47,6 +47,8 @@ export default function ChatPage() {
     "When did we last rest the south pasture?",
     "How much rain did we get this month?",
     "What's the history of herd health issues?",
+    "When did we vaccinate the herd?",
+    "When did we turn the bull out this year?",
   ];
 
   return (
