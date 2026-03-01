@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 
 export async function POST() {
@@ -12,12 +11,12 @@ export async function POST() {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  // Use admin client to delete the user from auth.users
-  // This cascades to delete all user data via ON DELETE CASCADE
-  const admin = createAdminClient();
-  const { error } = await admin.auth.admin.deleteUser(user.id);
+  // Call the SECURITY DEFINER RPC function which deletes auth.users
+  // (cascades to wipe all user data) without needing the service-role JWT.
+  const { error } = await supabase.rpc("delete_user_account");
 
   if (error) {
+    console.error("delete_user_account RPC error:", error);
     return NextResponse.json(
       { error: "Failed to delete account" },
       { status: 500 },
