@@ -78,7 +78,7 @@ export default async function DashboardPage() {
         >
           + New diary entry
         </Link>
-        {!hasEntries && <SeedButton />}
+        <SeedButton hasEntries={hasEntries} />
       </div>
 
       {/* Recent diary entries */}

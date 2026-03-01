@@ -2,8 +2,19 @@ import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import { chatModel } from "@/lib/ai/gateway";
 import { searchDiaryEntries } from "@/lib/rag/search";
 import { FARM_MEMORY_SYSTEM_PROMPT } from "@/lib/ai/prompts";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
+  // Authenticate user
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   let messages: UIMessage[];
   try {
     ({ messages } = (await request.json()) as { messages: UIMessage[] });
@@ -51,7 +62,7 @@ export async function POST(request: Request) {
   // Retrieve relevant diary entries via vector search
   let entries: { content_for_rag: string; similarity: number }[] = [];
   try {
-    entries = await searchDiaryEntries(lastUserMessageText, topK);
+    entries = await searchDiaryEntries(lastUserMessageText, topK, 0.3, user.id);
   } catch (err) {
     console.error("[chat route] RAG search error:", err);
     // Continue with empty context so chat still works without embeddings

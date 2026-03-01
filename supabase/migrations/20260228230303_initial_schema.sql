@@ -187,7 +187,7 @@ create index idx_entry_embeddings_hnsw
 -- ============================================================
 create or replace function public.match_diary_entries (
   query_embedding extensions.vector(1536),
-  match_threshold float default 0.72,
+  match_threshold float default 0.3,
   match_count int default 8,
   p_profile_id uuid default auth.uid()
 )

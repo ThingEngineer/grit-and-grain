@@ -1,6 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
+import { embedMany } from "ai";
+import { embeddingModel } from "@/lib/ai/gateway";
+import { formatEntryForRag } from "@/lib/rag/format";
 
 // ---------- Seed data definitions ----------
 
@@ -388,6 +391,14 @@ function buildDiaryEntries(
       tags: ["calving"],
     },
     {
+      entry_date: "2026-02-10",
+      pasture_id: null,
+      herd_group_id: null,
+      content:
+        "Got 0.6 inches of rain overnight. First real rain of February — been mostly dry this month. Ground is soft but not muddy. The stock ponds are holding steady.",
+      tags: ["rainfall"],
+    },
+    {
       entry_date: "2026-02-14",
       pasture_id: north,
       herd_group_id: null,
@@ -402,6 +413,14 @@ function buildDiaryEntries(
       content:
         "First calf of 2026 born yesterday evening! Bull calf, big and healthy. Two more cows look close. Here we go again. Planning to keep feeding hay until the grass is 6 inches and growing strong.",
       tags: ["calving"],
+    },
+    {
+      entry_date: "2026-02-25",
+      pasture_id: south,
+      herd_group_id: null,
+      content:
+        "Another 0.4 inches of rain this morning. Total rainfall for February is about 1 inch so far. Not great but better than last February. Hoping for one more good rain before March.",
+      tags: ["rainfall"],
     },
     {
       entry_date: "2026-02-28",
@@ -514,6 +533,77 @@ export async function POST() {
     );
   }
 
+  // 8. Generate embeddings for all diary entries so RAG chat works
+  // Build the reverse lookup maps: id → name
+  const pastureNameById: Record<
+    string,
+    { name: string; acres: number | null }
+  > = Object.fromEntries(
+    insertedPastures.map((p) => [
+      p.id,
+      {
+        name: p.name,
+        acres: pastures.find((pd) => pd.name === p.name)?.acres ?? null,
+      },
+    ]),
+  );
+  const herdNameById: Record<
+    string,
+    { name: string; head_count: number | null }
+  > = Object.fromEntries(
+    insertedHerds.map((h) => [
+      h.id,
+      {
+        name: h.name,
+        head_count:
+          herdGroups.find((hd) => hd.name === h.name)?.head_count ?? null,
+      },
+    ]),
+  );
+
+  // Build content_for_rag strings for each entry
+  const ragTexts = entries.map((e) => {
+    const pasture = e.pasture_id ? pastureNameById[e.pasture_id] : null;
+    const herd = e.herd_group_id ? herdNameById[e.herd_group_id] : null;
+    return formatEntryForRag({
+      entry_date: e.entry_date,
+      content: e.content,
+      pasture_name: pasture?.name ?? null,
+      acres: pasture?.acres ?? null,
+      herd_group_name: herd?.name ?? null,
+      head_count: herd?.head_count ?? null,
+      tags: e.tags,
+    });
+  });
+
+  try {
+    // Batch embed all entries at once
+    const { embeddings } = await embedMany({
+      model: embeddingModel,
+      values: ragTexts,
+    });
+
+    // Insert embeddings
+    const embeddingRows = insertedEntries.map((entry, i) => ({
+      entry_id: entry.id,
+      profile_id: profileId,
+      content_for_rag: ragTexts[i],
+      embedding: embeddings[i],
+    }));
+
+    const { error: embedError } = await admin
+      .from("entry_embeddings")
+      .insert(embeddingRows);
+
+    if (embedError) {
+      console.error("[seed] Failed to insert embeddings:", embedError.message);
+      // Don't fail the whole seed — entries are still usable without embeddings
+    }
+  } catch (err) {
+    console.error("[seed] Embedding generation failed:", err);
+    // Non-fatal: seed data is still useful without embeddings
+  }
+
   return NextResponse.json({
     success: true,
     seeded: {
@@ -522,4 +612,69 @@ export async function POST() {
       diaryEntries: insertedEntries.length,
     },
   });
+}
+
+// ---------- DELETE handler — Remove seed / demo data ----------
+
+export async function DELETE() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const profileId = user.id;
+  const admin = createAdminClient();
+
+  // Delete in order respecting foreign keys:
+  // entry_embeddings cascade from diary_entries, so just delete diary_entries first
+  const { error: entriesErr } = await admin
+    .from("diary_entries")
+    .delete()
+    .eq("profile_id", profileId);
+
+  if (entriesErr) {
+    return NextResponse.json(
+      { error: `Failed to delete diary entries: ${entriesErr.message}` },
+      { status: 500 },
+    );
+  }
+
+  // Delete weekly reviews
+  await admin.from("weekly_reviews").delete().eq("profile_id", profileId);
+
+  // Delete herd groups
+  const { error: herdsErr } = await admin
+    .from("herd_groups")
+    .delete()
+    .eq("profile_id", profileId);
+
+  if (herdsErr) {
+    return NextResponse.json(
+      { error: `Failed to delete herd groups: ${herdsErr.message}` },
+      { status: 500 },
+    );
+  }
+
+  // Delete pastures
+  const { error: pasturesErr } = await admin
+    .from("pastures")
+    .delete()
+    .eq("profile_id", profileId);
+
+  if (pasturesErr) {
+    return NextResponse.json(
+      { error: `Failed to delete pastures: ${pasturesErr.message}` },
+      { status: 500 },
+    );
+  }
+
+  // Reset ranch name
+  await admin.from("profiles").update({ ranch_name: null }).eq("id", profileId);
+
+  return NextResponse.json({ success: true });
 }
