@@ -10,6 +10,12 @@ import { ForceLightMode } from "@/components/landing/force-dark-mode";
 export default function LandingPage() {
   return (
     <>
+      {/* Runs synchronously before hydration to prevent dark-mode flash on the landing page */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `document.documentElement.classList.remove('dark');document.documentElement.classList.add('light');`,
+        }}
+      />
       <main className="scroll-smooth">
         <ForceLightMode />
         <LandingNav />
