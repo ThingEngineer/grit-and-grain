@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Newsreader, Space_Grotesk } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ProgressBar } from "@/components/progress-bar";
 import "./globals.css";
 
 const newsreader = Newsreader({
@@ -32,7 +33,10 @@ export default function RootLayout({
       <body
         className={`${newsreader.variable} ${spaceGrotesk.variable} antialiased`}
       >
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <ProgressBar />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
