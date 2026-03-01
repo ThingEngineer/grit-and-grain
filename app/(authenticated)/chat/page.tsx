@@ -5,6 +5,7 @@ import { DefaultChatTransport } from "ai";
 import { useChat } from "@ai-sdk/react";
 import Markdown from "react-markdown";
 import { checkTopicRelevance } from "@/lib/ai/topic-guard";
+import { ReadAloudButton } from "@/components/read-aloud-button";
 
 export default function ChatPage() {
   const { messages, sendMessage, status, error } = useChat({
@@ -130,9 +131,14 @@ export default function ChatPage() {
               {m.role === "user" ? (
                 <div className="whitespace-pre-wrap">{m.text}</div>
               ) : (
-                <div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-li:my-0">
-                  <Markdown>{m.text}</Markdown>
-                </div>
+                <>
+                  <div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-li:my-0">
+                    <Markdown>{m.text}</Markdown>
+                  </div>
+                  <div className="mt-1.5 flex justify-end">
+                    <ReadAloudButton text={m.text} />
+                  </div>
+                </>
               )}
             </div>
           </div>

@@ -2,19 +2,8 @@
 
 import { useState } from "react";
 import Markdown from "react-markdown";
-
-function stripMarkdown(text: string): string {
-  return text
-    .replace(/#{1,6}\s?/g, "") // headings
-    .replace(/\*{1,3}([^*]+)\*{1,3}/g, "$1") // bold/italic
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // links
-    .replace(/^[\s]*[-*+]\s/gm, "") // list markers
-    .replace(/^>\s?/gm, "") // blockquotes
-    .replace(/`{1,3}[^`]*`{1,3}/g, "") // inline code
-    .replace(/\n{2,}/g, " ") // collapse newlines
-    .replace(/\n/g, " ")
-    .trim();
-}
+import { stripMarkdown } from "@/lib/utils/strip-markdown";
+import { ReadAloudButton } from "@/components/read-aloud-button";
 
 type WeeklyReview = {
   id: string;
@@ -152,8 +141,13 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
 
         {/* Review content */}
         {displayMd && !isLoading && (
-          <div className="prose max-w-none dark:prose-invert rounded-lg border border-border bg-card p-6">
-            <Markdown>{displayMd}</Markdown>
+          <div className="rounded-lg border border-border bg-card p-6">
+            <div className="mb-3 flex justify-end">
+              <ReadAloudButton text={displayMd} />
+            </div>
+            <div className="prose max-w-none dark:prose-invert">
+              <Markdown>{displayMd}</Markdown>
+            </div>
           </div>
         )}
 
