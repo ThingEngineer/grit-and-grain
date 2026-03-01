@@ -45,6 +45,17 @@ export async function POST(request: Request) {
     );
   }
 
+  // Reject oversized messages to prevent token abuse (max 2000 chars)
+  if (lastUserMessageText.length > 2000) {
+    return Response.json(
+      {
+        error:
+          "Message is too long. Please keep questions under 2000 characters.",
+      },
+      { status: 400 },
+    );
+  }
+
   // Guard: reject off-topic messages before touching RAG or the LLM
   const topicCheck = checkTopicRelevance(lastUserMessageText);
   if (!topicCheck.allowed) {

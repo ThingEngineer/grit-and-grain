@@ -28,6 +28,17 @@ export async function POST(request: Request) {
     return Response.json({ error: "No transcript provided" }, { status: 400 });
   }
 
+  // Reject oversized transcripts to prevent token abuse (max 5000 chars)
+  if (typeof transcript !== "string" || transcript.length > 5000) {
+    return Response.json(
+      {
+        error:
+          "Transcript is too long. Please keep voice notes under 5000 characters.",
+      },
+      { status: 400 },
+    );
+  }
+
   const { object } = await generateObject({
     model: chatModel,
     schema: extractionSchema,

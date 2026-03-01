@@ -3,6 +3,9 @@ import { embeddingModel } from "@/lib/ai/gateway";
 import { formatEntryForRag } from "@/lib/rag/format";
 import { createClient } from "@/lib/supabase/server";
 
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function POST(request: Request) {
   const { entryId } = await request.json();
   const supabase = await createClient();
@@ -15,6 +18,11 @@ export async function POST(request: Request) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Validate entryId is a well-formed UUID before touching the database
+  if (!entryId || !UUID_REGEX.test(entryId)) {
+    return Response.json({ error: "Invalid entry ID" }, { status: 400 });
+  }
+
   // Fetch entry with related data
   const { data: entry } = await supabase
     .from("diary_entries")
@@ -24,6 +32,11 @@ export async function POST(request: Request) {
 
   if (!entry) {
     return Response.json({ error: "Entry not found" }, { status: 404 });
+  }
+
+  // Defense-in-depth: confirm entry belongs to the authenticated user
+  if (entry.profile_id !== user.id) {
+    return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 
   // Build canonical text

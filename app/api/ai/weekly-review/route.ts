@@ -14,10 +14,25 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const weekEnd = body.weekEnd || new Date().toISOString().split("T")[0];
-  const weekStart =
-    body.weekStart ||
-    new Date(Date.now() - 7 * 86400000).toISOString().split("T")[0];
+  const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+  const weekEnd: string =
+    typeof body.weekEnd === "string" && ISO_DATE.test(body.weekEnd)
+      ? body.weekEnd
+      : new Date().toISOString().split("T")[0];
+  const weekStart: string =
+    typeof body.weekStart === "string" && ISO_DATE.test(body.weekStart)
+      ? body.weekStart
+      : new Date(Date.now() - 7 * 86400000).toISOString().split("T")[0];
+
+  // Cap date range to 14 days to prevent unbounded token consumption
+  const startMs = new Date(weekStart).getTime();
+  const endMs = new Date(weekEnd).getTime();
+  if (isNaN(startMs) || isNaN(endMs) || endMs - startMs > 14 * 86400000) {
+    return Response.json(
+      { error: "Date range must be valid and no longer than 14 days." },
+      { status: 400 },
+    );
+  }
 
   // Fetch entries in range
   const { data: entries } = await supabase
