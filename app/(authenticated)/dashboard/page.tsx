@@ -34,6 +34,7 @@ export default async function DashboardPage() {
   const { data: entries } = await supabase
     .from("diary_entries")
     .select("*, pastures(name), herd_groups(name)")
+    .eq("profile_id", user!.id)
     .order("entry_date", { ascending: false })
     .limit(5);
 

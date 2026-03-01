@@ -48,6 +48,7 @@ export async function POST(request: Request) {
   const { data: entries } = await supabase
     .from("diary_entries")
     .select("*, pastures(name), herd_groups(name)")
+    .eq("profile_id", user.id)
     .gte("entry_date", weekStart)
     .lte("entry_date", weekEnd)
     .order("entry_date", { ascending: true });

@@ -4,9 +4,14 @@ import { ReviewClient } from "./review-client";
 export default async function ReviewPage() {
   const supabase = await createClient();
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   const { data: previousReviews } = await supabase
     .from("weekly_reviews")
     .select("*")
+    .eq("profile_id", user!.id)
     .order("created_at", { ascending: false })
     .limit(10);
 
