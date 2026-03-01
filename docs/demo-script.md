@@ -58,7 +58,7 @@
 
 > _"Every week, Grit & Grain synthesises everything you logged into a structured summary — rainfall totals, rotation moves, hay activity, herd health. No more trying to remember what happened Monday when you're doing your Saturday planning."_
 
-> _"In the MVP, reviews are generated on-demand so the producer stays in control. In practice, this would be scheduled automatically on a chosen day and time, and optionally delivered by email or SMS."_
+> _"In testing, reviews are generated on-demand so the producer stays in control. In practice, this would be scheduled automatically on a chosen day and time, and optionally delivered by email or push notification."_
 
 **Highlight the "Trends to Watch" section.**
 
@@ -66,7 +66,31 @@
 
 ---
 
-## Closing (2:25 – 2:45)
+## Act 4 — Offline Mode (2:25 – 2:45)
+
+**Action:** Navigate to the **Dashboard**. Disconnect from the Internet (toggle Wi-Fi off or unplug the ethernet cable).
+
+> _"One more thing ranchers ask about — what happens when you're out of cell range? Because that's most of the time."_
+
+**Action:** Point out the **Offline** banner that appears at the top of the screen.
+
+> _"The app detects it immediately and lets you know. But watch — everything still works."_
+
+**Action:** Tap the microphone button and record a new diary entry.
+
+> _"March 1st, moved the cow-calf pairs off the north pasture. Looking a little thin after the strip-grazing. Going to let it rest for three weeks before putting anyone back on it."_
+
+**Action:** Tap **Stop**. The entry saves locally — it appears in the diary list.
+
+> _"That entry is saved right on the device. No signal, no problem. If you try to open Farm Memory or generate a review, you'll see a 'Reconnect for insights' message — but recording notes keeps working without interruption."_
+
+**Action:** Re-enable the Internet connection. Watch the offline banner disappear and the queued entry sync automatically.
+
+> _"The moment you're back online, it syncs silently in the background. Nothing to confirm, nothing to re-submit. Your entry is in the database, embedded, and ready to be cited in a future Farm Memory answer."_
+
+---
+
+## Closing (2:45 – 3:05)
 
 > _"Every voice note you record today becomes historical context for a question you haven't thought to ask yet. Three years from now you'll be able to ask 'what did we do the last time we had a dry February?' — and you'll get a real answer, with receipts."_
 
