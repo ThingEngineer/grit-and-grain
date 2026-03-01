@@ -10,9 +10,15 @@
 
 Ranchers and small-scale farmers carry decades of hard-won knowledge entirely in their heads. When did the back pasture last rest? What was the hay yield before that drought year? Which rotation sequence held up best through a wet spring? That institutional memory disappears when an operator retires, gets hurt, or simply forgets.
 
+The scale of this problem is significant: according to the USDA's 2022 Census of Agriculture, the average U.S. farm operator is **58.1 years old**, and more than **370 million acres** are projected to change hands over the next decade. Yet fewer than one-third of farm operations have a documented succession or knowledge-transfer plan. Every retirement is a potential erasure of irreplaceable operational history.
+
 Existing farm-management apps demand structured data entry—spreadsheets, forms, GPS tracks—while a rancher is still muddy from the morning's work. Voice is the natural interface for the field, but today there is no tool that captures raw, unstructured voice notes and turns them into queryable history.
 
 **Grit & Grain** bridges that gap: speak naturally, build a permanent, searchable record, and let AI surface the patterns that inform next season's decisions.
+
+### What Makes This Different
+
+General-purpose voice assistants and note apps don't understand ranch operations—they can't cross-reference a pasture rotation from three years ago against today's rainfall reading. Existing ag-tech platforms require disciplined structured data entry, which fails at the point of use: in the field, with muddy hands, during a busy work day. Grit & Grain is the only tool that combines **voice-first field capture**, **NLP entity extraction**, and a **longitudinal vector database** designed specifically for the multi-year decision cadence of pasture-based agriculture. The result is an AI that can answer questions like _"Has the south pasture ever produced a second hay cut in a dry year?"_ with citations from your own history—not generic advice.
 
 ---
 
@@ -58,10 +64,10 @@ The demo environment is pre-loaded with twelve months of synthetic diary entries
 
 1. Sign in → land on the Dashboard
 2. Tap **Record** → speak a 15-second voice note about today's pasture condition
-3. Watch the note transcribe, tag itself to a pasture, and appear in the Diary
-4. Open **Farm Memory** → ask _"When did we last rest the North Pasture, and what was the rainfall that month?"_
-5. Review the cited answer (sources shown inline)
-6. Open **Weekly Review** → see the AI-generated summary with trend bullets
+3. Watch the note transcribe, auto-tag itself to a pasture and herd group (NLP entity extraction), and appear in the Diary
+4. Open **Farm Memory** → ask _"When did we last rest the North Pasture, and what was the rainfall that month?"_ — this is the question that previously required digging through years of paper notebooks or relying on aging memory
+5. Review the cited answer (sources shown inline, grounded only in your actual diary history)
+6. Open **Weekly Review** → see the AI-generated summary with trend bullets and cited entry dates
 
 ---
 
@@ -76,10 +82,10 @@ Built on a modern, serverless stack optimised for rapid iteration: **Next.js on 
 | Component                                | Technology                                                                                                                                                                                                                                                                |
 | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Voice-to-text**                        | Browser Web Speech API (client) → Whisper (server fallback)                                                                                                                                                                                                               |
-| **Natural Language Processing (NLP)**    | Entity extraction (pasture names, herd groups, dates, species) and auto-tagging from raw transcripts                                                                                                                                                                      |
+| **NLP Entity Extraction**                | Anthropic Claude (via Vercel AI Gateway, `POST /api/ai/extract`) — auto-tags each entry with pasture name, herd group, observation categories (rainfall, rotation, hay, herd health, etc.), and resolved dates before the entry is saved                                  |
+| **Embedding**                            | OpenAI `text-embedding-3-small` (1536-dim, via Vercel AI Gateway, `POST /api/ai/embed`) — encodes the canonical `content_for_rag` text string for every saved entry                                                                                                       |
 | **AI Gateway**                           | [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) — unified routing layer for all model calls with provider failover, usage observability, and rate-limit management                                                                                                |
 | **Text generation**                      | Anthropic Claude (via Vercel AI Gateway, e.g. `anthropic/claude-sonnet-4.6`) — powers Farm Memory chat and Weekly Review with strict citation discipline                                                                                                                  |
-| **Embedding**                            | OpenAI `text-embedding-3-small` (1536-dim, via Vercel AI Gateway as `openai/text-embedding-3-small`)                                                                                                                                                                      |
 | **Longitudinal vector database**         | pgvector extension on Supabase Postgres — stores every entry embedding for long-horizon retrieval                                                                                                                                                                         |
 | **RAG (Retrieval-Augmented Generation)** | Cosine-similarity nearest-neighbour search (`match_diary_entries` Postgres function) returns historical context; injected into Anthropic Claude prompt with strict citation rules. Model is instructed to only use retrieved entries — sources are shown inline in the UI |
 | **Weekly Review**                        | On-demand generation via Next.js Route Handler (`POST /api/ai/weekly-review`). Rolling last 7 days by default; supports custom date range. In production, scheduled via Vercel Cron / Supabase pg_cron on a user-chosen cadence                                           |
@@ -191,4 +197,4 @@ pnpm dev
 
 ---
 
-_Built for the Grit & Grain Hackathon MVP · 2026_
+_Built for Vibeathon · 2026_
