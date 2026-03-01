@@ -24,13 +24,24 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=eyJ...
 SUPABASE_SECRET_KEY=eyJ...
 
-# AI — Vercel AI Gateway
-OPENAI_API_KEY=sk-...
-ANTHROPIC_API_KEY=sk-ant-...
+# Vercel AI Gateway (unified access to Anthropic & OpenAI models)
+VERCEL_AI_GATEWAY_API_KEY=<your-api-key>
+VERCEL_AI_GATEWAY_BASE_URL=https://api.vercel.ai
+
+# AI Model choices (easily switched per environment)
+NEXT_PUBLIC_AI_CHAT_MODEL=anthropic/claude-4.6-sonnet
+NEXT_PUBLIC_AI_EMBEDDING_MODEL=openai/text-embedding-3-small
 
 # App
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
+
+Get your Vercel AI Gateway API key from [Vercel Dashboard → AI Gateway](https://vercel.com/docs/ai-gateway).
+
+**Recommended model alternatives:**
+
+- **Chat:** `openai/gpt-4o-mini` (ultra-cheap) or `anthropic/claude-3.5-haiku` (lean)
+- **Embeddings:** `openai/text-embedding-3-small` (recommended, already very cheap)
 
 ---
 

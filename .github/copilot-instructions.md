@@ -8,7 +8,7 @@ AI-powered ranch assistant (hackathon MVP). Ranchers record voice notes → tran
 
 - **Frontend/API:** Next.js 16 App Router, React 19, Tailwind CSS 4, pnpm
 - **Auth & DB:** Supabase (email/password auth, Postgres + pgvector, RLS on all tables)
-- **AI pipeline:** Vercel AI SDK (`ai` + `@ai-sdk/anthropic` for generation + `@ai-sdk/openai` for embeddings) routed through Vercel AI Gateway
+- **AI pipeline:** Vercel AI SDK (`ai` package) routed through Vercel AI Gateway for unified access to Anthropic Claude and OpenAI models
 - **Path alias:** `@/*` maps to project root (e.g. `@/lib/supabase/server`)
 
 ## Supabase Client Pattern (Critical)
@@ -53,6 +53,7 @@ The project follows a phased plan in `docs/implementation/`. Each phase file is 
 ## AI Prompt & RAG Patterns
 
 - All AI prompts are defined in `docs/prompts.md` — use these templates exactly.
+- Model selection: text generation uses `anthropic/claude-3.5-sonnet`, embeddings use `openai/text-embedding-3-small` (both via Vercel AI Gateway). Override via `NEXT_PUBLIC_AI_CHAT_MODEL` and `NEXT_PUBLIC_AI_EMBEDDING_MODEL` environment variables.
 - `content_for_rag` is a canonical text format (Date/Pasture/Herd/Rain/Notes) stored alongside embeddings. Omit null fields.
 - RAG retrieval: top-k=8 (12 for trend questions), similarity threshold 0.72, cosine metric.
 - NLP entity extraction runs after voice transcription to auto-tag entries (temperature=0, max 200 tokens).
@@ -71,9 +72,9 @@ pnpm lint               # ESLint (next/core-web-vitals + typescript)
 
 ```
 NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY  # Client-safe
-SUPABASE_SECRET_KEY         # Server-only (admin/service-role)
-OPENAI_API_KEY              # Embeddings
-ANTHROPIC_API_KEY           # Text generation
+SUPABASE_SECRET_KEY              # Server-only (admin/service-role)
+VERCEL_AI_GATEWAY_API_KEY        # Unified access to Anthropic + OpenAI models
+VERCEL_AI_GATEWAY_BASE_URL       # https://api.vercel.ai
 ```
 
 ## Code Style

@@ -2,8 +2,10 @@
 
 > **Runtime:** All prompts are executed through [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) using the [Vercel AI SDK](https://sdk.vercel.ai/) (`ai` package).
 >
-> - **Text generation** — Anthropic Claude (via `@ai-sdk/anthropic`) — powers Farm Memory chat and Weekly Review
-> - **Embeddings** — OpenAI `text-embedding-3-small`, 1536 dimensions (via `@ai-sdk/openai`)
+> - **Text generation** — Anthropic Claude (via Vercel AI Gateway, e.g., `anthropic/claude-4.6-sonnet`, configurable via `NEXT_PUBLIC_AI_CHAT_MODEL`)
+> - **Embeddings** — OpenAI `text-embedding-3-small` (via Vercel AI Gateway, e.g., `openai/text-embedding-3-small`, configurable via `NEXT_PUBLIC_AI_EMBEDDING_MODEL`)
+> - **Gateway Authentication** — Uses a single `VERCEL_AI_GATEWAY_API_KEY` for all model access
+> - **Available Models:** See full list at [Vercel AI Gateway Models](https://vercel.com/docs/ai-gateway/available-models)
 >
 > Route handlers: `POST /api/ai/chat`, `POST /api/ai/weekly-review`, `POST /api/ai/embed`
 

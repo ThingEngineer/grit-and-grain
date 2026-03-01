@@ -63,19 +63,19 @@ Built on a modern, serverless stack optimised for rapid iteration: **Next.js on 
 | **Voice-to-text**                        | Browser Web Speech API (client) → Whisper (server fallback)                                                                                                                                                                                                               |
 | **Natural Language Processing (NLP)**    | Entity extraction (pasture names, herd groups, dates, species) and auto-tagging from raw transcripts                                                                                                                                                                      |
 | **AI Gateway**                           | [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) — unified routing layer for all model calls with provider failover, usage observability, and rate-limit management                                                                                                |
-| **Text generation**                      | Anthropic Claude (via Vercel AI SDK `@ai-sdk/anthropic`) — powers Farm Memory chat and Weekly Review with strict citation discipline                                                                                                                                      |
-| **Embedding**                            | OpenAI `text-embedding-3-small` (1536-dim) via Vercel AI SDK `@ai-sdk/openai`                                                                                                                                                                                             |
+| **Text generation**                      | Anthropic Claude (via Vercel AI Gateway, e.g. `anthropic/claude-4.6-sonnet`) — powers Farm Memory chat and Weekly Review with strict citation discipline                                                                                                                  |
+| **Embedding**                            | OpenAI `text-embedding-3-small` (1536-dim, via Vercel AI Gateway as `openai/text-embedding-3-small`)                                                                                                                                                                      |
 | **Longitudinal vector database**         | pgvector extension on Supabase Postgres — stores every entry embedding for long-horizon retrieval                                                                                                                                                                         |
 | **RAG (Retrieval-Augmented Generation)** | Cosine-similarity nearest-neighbour search (`match_diary_entries` Postgres function) returns historical context; injected into Anthropic Claude prompt with strict citation rules. Model is instructed to only use retrieved entries — sources are shown inline in the UI |
 | **Weekly Review**                        | On-demand generation via Next.js Route Handler (`POST /api/ai/weekly-review`). Rolling last 7 days by default; supports custom date range. In production, scheduled via Vercel Cron / Supabase pg_cron on a user-chosen cadence                                           |
 
 ### Vercel AI SDK Integration
 
-All AI features are implemented using the [Vercel AI SDK](https://sdk.vercel.ai/) (`ai` package) with provider-specific adapters:
+All AI features are implemented using the [Vercel AI SDK](https://sdk.vercel.ai/) (`ai` package) routed through **Vercel AI Gateway**:
 
-- **`@ai-sdk/anthropic`** — Chat completion and weekly review generation
-- **`@ai-sdk/openai`** — Embedding generation (`text-embedding-3-small`, 1536 dimensions)
-- **Vercel AI Gateway** — Routes all model calls through Vercel's managed gateway, providing automatic retries, observability, and a single billing surface
+- **Unified authentication** — Single `VERCEL_AI_GATEWAY_API_KEY` grants access to all models (Anthropic + OpenAI)
+- **Model routing** — Reference models by their gateway IDs (e.g., `anthropic/claude-opus-4.5`, `openai/text-embedding-3-small`)
+- **Features** — Automatic retries, usage observability, rate-limit management, and a single billing surface
 
 ### Why Longitudinal Matters
 
@@ -147,11 +147,13 @@ pnpm install
 # 3. Set up environment variables
 cp .env.example .env.local
 # Required variables:
-#   NEXT_PUBLIC_SUPABASE_URL          – Supabase project URL
+#   NEXT_PUBLIC_SUPABASE_URL                  – Supabase project URL
 #   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY – Supabase anon/public key
-#   SUPABASE_SECRET_KEY               – Supabase service-role key (server-side only)
-#   OPENAI_API_KEY                    – For text-embedding-3-small embeddings
-#   ANTHROPIC_API_KEY                 – For Claude text generation
+#   SUPABASE_SECRET_KEY                       – Supabase service-role key (server-side only)
+#   VERCEL_AI_GATEWAY_API_KEY                 – Vercel AI Gateway API key (unified access)
+#   VERCEL_AI_GATEWAY_BASE_URL                – https://api.vercel.ai
+#   NEXT_PUBLIC_AI_CHAT_MODEL                 – Chat model (e.g. anthropic/claude-3.5-sonnet)
+#   NEXT_PUBLIC_AI_EMBEDDING_MODEL            – Embedding model (e.g. openai/text-embedding-3-small)
 
 # 4. Start Supabase locally (requires Supabase CLI + Docker)
 supabase start

@@ -39,36 +39,64 @@ Verify in `package.json` that these are added:
 Add to `.env.local`:
 
 ```env
-# Vercel AI Gateway (model API keys)
-OPENAI_API_KEY=sk-...
-ANTHROPIC_API_KEY=sk-ant-...
+# Vercel AI Gateway
+VERCEL_AI_GATEWAY_API_KEY=<your-gateway-api-key>
+VERCEL_AI_GATEWAY_BASE_URL=https://api.vercel.ai
+
+# AI Model choices (easily changed per environment)
+NEXT_PUBLIC_AI_CHAT_MODEL=anthropic/claude-4.6-sonnet
+NEXT_PUBLIC_AI_EMBEDDING_MODEL=openai/text-embedding-3-small
 ```
 
-The Vercel AI SDK reads these automatically when using the provider adapters.
+Get your Vercel AI Gateway API key from [Vercel Dashboard → Settings → AI Gateway](https://vercel.com/docs/ai-gateway).
+
+**Model choices explained:**
+
+- **Chat model:** `anthropic/claude-4.6-sonnet` — latest Sonnet model, excellent for RAG and summaries
+- **Embedding model:** `openai/text-embedding-3-small` — industry-standard embeddings, low cost
+
+To switch models (e.g., for production), just change the values without touching code.
 
 ---
 
 ### E.3 — Create AI utility files
 
-#### `lib/ai/gateway.ts` — Provider instances
+**Note:** All models are accessed through Vercel AI Gateway using unified authentication. Available models include:
+
+**Anthropic models:** `anthropic/claude-opus-4.5`, `anthropic/claude-opus-4`, `anthropic/claude-3.5-sonnet`, `anthropic/claude-3.5-haiku`, and more.
+
+**OpenAI models:** `openai/gpt-5`, `openai/gpt-4o`, `openai/gpt-3.5-turbo`, `openai/text-embedding-3-small`, and more.
+
+For the full list of available models, see [Vercel AI Gateway Models](https://vercel.com/docs/ai-gateway/available-models).
+
+#### `lib/ai/gateway.ts` — Provider instances via Vercel AI Gateway
 
 ```typescript
 import { createOpenAI } from "@ai-sdk/openai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 
-// Optionally configure with Vercel AI Gateway base URL if using gateway routing
-// For direct provider access, the defaults work
+const apiKey = process.env.VERCEL_AI_GATEWAY_API_KEY;
+const baseURL =
+  process.env.VERCEL_AI_GATEWAY_BASE_URL || "https://api.vercel.ai";
+
+// Route all models through Vercel AI Gateway
 export const openai = createOpenAI({
-  // apiKey is read from OPENAI_API_KEY env var automatically
+  apiKey,
+  baseURL,
 });
 
 export const anthropic = createAnthropic({
-  // apiKey is read from ANTHROPIC_API_KEY env var automatically
+  apiKey,
+  baseURL,
 });
 
-// Model references
-export const embeddingModel = openai.embedding("text-embedding-3-small");
-export const chatModel = anthropic("claude-sonnet-4-20250514");
+// Model references (read from environment variables for easy switching across environments)
+export const embeddingModel = openai.embedding(
+  process.env.NEXT_PUBLIC_AI_EMBEDDING_MODEL || "openai/text-embedding-3-small",
+);
+export const chatModel = anthropic(
+  process.env.NEXT_PUBLIC_AI_CHAT_MODEL || "anthropic/claude-4.6-sonnet",
+);
 ```
 
 #### `lib/ai/prompts.ts` — System prompt constants
@@ -321,6 +349,8 @@ export default function ChatPage() {
 ### E.8 — Create Weekly Review endpoint
 
 Create `app/api/ai/weekly-review/route.ts`:
+
+**Note:** The `chatModel` exported from `lib/ai/gateway.ts` automatically routes through Vercel AI Gateway to `anthropic/claude-opus-4.5` (or your chosen model).
 
 **Flow:**
 
