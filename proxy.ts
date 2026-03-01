@@ -61,6 +61,27 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Redirect authenticated users with incomplete profiles to onboarding
+  if (
+    user &&
+    !request.nextUrl.pathname.startsWith("/profile") &&
+    !request.nextUrl.pathname.startsWith("/api/") &&
+    !request.nextUrl.pathname.startsWith("/auth")
+  ) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile?.full_name) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/profile";
+      url.searchParams.set("onboarding", "true");
+      return NextResponse.redirect(url);
+    }
+  }
+
   // IMPORTANT: You MUST return the response object as-is
   return response;
 }
