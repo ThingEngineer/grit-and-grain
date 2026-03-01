@@ -47,7 +47,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
             htmlFor="full_name"
             className="mb-1 block text-sm font-medium text-foreground"
           >
-            Full Name
+            Name
           </label>
           <input
             type="text"
@@ -55,7 +55,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
             name="full_name"
             defaultValue={profile?.full_name ?? ""}
             className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
-            placeholder="Your full name"
+            placeholder="Your name"
           />
         </div>
 
