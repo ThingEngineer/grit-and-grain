@@ -11,15 +11,18 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Fetch profile for ranch name
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("ranch_name")
-    .eq("id", user!.id)
-    .single();
-
-  // Fetch quick stats
-  const [{ count: entryCount }, { count: pastureCount }] = await Promise.all([
+  // Fetch all dashboard data in parallel — avoids sequential Supabase round-trips
+  const [
+    { data: profile },
+    { count: entryCount },
+    { count: pastureCount },
+    { data: entries },
+  ] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("ranch_name")
+      .eq("id", user!.id)
+      .single(),
     supabase
       .from("diary_entries")
       .select("*", { count: "exact", head: true })
@@ -28,15 +31,13 @@ export default async function DashboardPage() {
       .from("pastures")
       .select("*", { count: "exact", head: true })
       .eq("profile_id", user!.id),
+    supabase
+      .from("diary_entries")
+      .select("*, pastures(name), herd_groups(name)")
+      .eq("profile_id", user!.id)
+      .order("entry_date", { ascending: false })
+      .limit(5),
   ]);
-
-  // Fetch recent entries
-  const { data: entries } = await supabase
-    .from("diary_entries")
-    .select("*, pastures(name), herd_groups(name)")
-    .eq("profile_id", user!.id)
-    .order("entry_date", { ascending: false })
-    .limit(5);
 
   const hasEntries = (entryCount ?? 0) > 0;
 

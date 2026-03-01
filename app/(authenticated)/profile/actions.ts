@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 export async function updateProfile(formData: FormData) {
   const supabase = await createClient();
@@ -35,6 +36,21 @@ export async function updateProfile(formData: FormData) {
   }
 
   revalidatePath("/", "layout");
+
+  // Keep the onboarding_complete cookie in sync with whether full_name is set.
+  // Middleware reads this cookie to skip a DB round-trip on every request.
+  const cookieStore = await cookies();
+  if (fullName) {
+    cookieStore.set("onboarding_complete", "1", {
+      path: "/",
+      sameSite: "lax",
+      secure: true,
+      httpOnly: true,
+      maxAge: 60 * 60 * 24 * 365,
+    });
+  } else {
+    cookieStore.delete("onboarding_complete");
+  }
 
   const isOnboarding = formData.get("onboarding") === "true";
   if (isOnboarding) {

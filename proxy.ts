@@ -63,24 +63,31 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Redirect authenticated users with incomplete profiles to onboarding
+  // Redirect authenticated users with incomplete profiles to onboarding.
+  // Skip the DB call when the onboarding_complete cookie is already set —
+  // this saves one Supabase round-trip on every authenticated request.
   if (
     user &&
     !request.nextUrl.pathname.startsWith("/profile") &&
     !request.nextUrl.pathname.startsWith("/api/") &&
     !request.nextUrl.pathname.startsWith("/auth")
   ) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("full_name")
-      .eq("id", user.id)
-      .single();
+    const isOnboardingComplete =
+      request.cookies.get("onboarding_complete")?.value === "1";
 
-    if (!profile?.full_name) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/profile";
-      url.searchParams.set("onboarding", "true");
-      return NextResponse.redirect(url);
+    if (!isOnboardingComplete) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user.id)
+        .single();
+
+      if (!profile?.full_name) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/profile";
+        url.searchParams.set("onboarding", "true");
+        return NextResponse.redirect(url);
+      }
     }
   }
 
