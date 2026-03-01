@@ -447,13 +447,12 @@ export async function POST() {
   }
 
   // 3. Use admin client (bypasses RLS) for inserts
-  const admin = await createAdminClient();
+  const admin = createAdminClient();
 
-  // 4. Update profile with ranch name
+  // 4. Upsert profile with ranch name (creates the row if the trigger missed it)
   const { error: profileError } = await admin
     .from("profiles")
-    .update({ ranch_name: "Dry Creek Ranch" })
-    .eq("id", profileId);
+    .upsert({ id: profileId, ranch_name: "Dry Creek Ranch" });
 
   if (profileError) {
     return NextResponse.json(

@@ -72,7 +72,7 @@ async function generateEmbedding(entry: {
   });
 
   // Use admin client to bypass RLS for background embedding insert
-  const adminSupabase = await createAdminClient();
+  const adminSupabase = createAdminClient();
   await adminSupabase.from("entry_embeddings").upsert(
     {
       entry_id: entry.id,

@@ -44,12 +44,11 @@ export default async function DashboardPage() {
       {/* Welcome header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-          {profile?.ranch_name
-            ? `Welcome back — ${profile.ranch_name}`
-            : `Welcome, ${profile?.full_name || user!.email}`}
+          Welcome back, {profile?.full_name || user!.email}
         </h1>
         <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-          Your ranch at a glance.
+          {profile?.ranch_name ? `${profile.ranch_name} · ` : ""}Your ranch at a
+          glance.
         </p>
       </div>
 
