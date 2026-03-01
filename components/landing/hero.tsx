@@ -71,7 +71,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-6 font-serif text-4xl font-bold leading-tight text-white md:text-6xl"
+            className="mt-6 font-serif text-4xl font-bold leading-tight text-zinc-900 md:text-6xl"
           >
             Stop relying on memory.{" "}
             <span className="text-accent">Start relying on history.</span>
