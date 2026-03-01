@@ -81,7 +81,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="mt-6 text-lg leading-relaxed text-zinc-900/85 md:text-xl"
+            className="mt-6 text-lg leading-relaxed text-white/85 md:text-xl"
           >
             The AI-powered field journal built for ranchers and small-scale
             farmers who carry their operation&apos;s history in their head — and
