@@ -2,6 +2,7 @@ import { generateText } from "ai";
 import { chatModel } from "@/lib/ai/gateway";
 import { WEEKLY_REVIEW_SYSTEM_PROMPT } from "@/lib/ai/prompts";
 import { createClient } from "@/lib/supabase/server";
+import { checkRateLimit } from "@/lib/ai/rate-limit";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -11,6 +12,15 @@ export async function POST(request: Request) {
 
   if (!user) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Rate limit: 20 weekly reviews per user per hour
+  const rateCheck = checkRateLimit(user.id, "weekly-review", 20);
+  if (!rateCheck.allowed) {
+    return Response.json(
+      { error: `Too many requests. Please wait ${rateCheck.retryAfter}s before trying again.` },
+      { status: 429, headers: { "Retry-After": String(rateCheck.retryAfter) } },
+    );
   }
 
   const body = await request.json();

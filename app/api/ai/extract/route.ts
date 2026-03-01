@@ -2,6 +2,7 @@ import { generateObject } from "ai";
 import { chatModel } from "@/lib/ai/gateway";
 import { NLP_ENTITY_EXTRACTION_PROMPT } from "@/lib/ai/prompts";
 import { createClient } from "@/lib/supabase/server";
+import { checkRateLimit } from "@/lib/ai/rate-limit";
 import { z } from "zod/v4";
 
 const extractionSchema = z.object({
@@ -20,6 +21,15 @@ export async function POST(request: Request) {
 
   if (!user) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Rate limit: 100 extractions per user per hour
+  const rateCheck = checkRateLimit(user.id, "extract", 100);
+  if (!rateCheck.allowed) {
+    return Response.json(
+      { error: `Too many requests. Please wait ${rateCheck.retryAfter}s before trying again.` },
+      { status: 429, headers: { "Retry-After": String(rateCheck.retryAfter) } },
+    );
   }
 
   const { transcript, pastures, herdGroups } = await request.json();

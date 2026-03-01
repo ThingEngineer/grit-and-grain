@@ -4,6 +4,7 @@ import { searchDiaryEntries } from "@/lib/rag/search";
 import { FARM_MEMORY_SYSTEM_PROMPT } from "@/lib/ai/prompts";
 import { checkTopicRelevance } from "@/lib/ai/topic-guard";
 import { createClient } from "@/lib/supabase/server";
+import { checkRateLimit } from "@/lib/ai/rate-limit";
 
 export async function POST(request: Request) {
   // Authenticate user
@@ -14,6 +15,15 @@ export async function POST(request: Request) {
 
   if (!user) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Rate limit: 60 chat messages per user per hour
+  const rateCheck = checkRateLimit(user.id, "chat", 60);
+  if (!rateCheck.allowed) {
+    return Response.json(
+      { error: `Too many requests. Please wait ${rateCheck.retryAfter}s before trying again.` },
+      { status: 429, headers: { "Retry-After": String(rateCheck.retryAfter) } },
+    );
   }
 
   let messages: UIMessage[];

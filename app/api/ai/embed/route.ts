@@ -2,6 +2,7 @@ import { embed } from "ai";
 import { embeddingModel } from "@/lib/ai/gateway";
 import { formatEntryForRag } from "@/lib/rag/format";
 import { createClient } from "@/lib/supabase/server";
+import { checkRateLimit } from "@/lib/ai/rate-limit";
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -16,6 +17,15 @@ export async function POST(request: Request) {
   } = await supabase.auth.getUser();
   if (!user) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Rate limit: 200 embeddings per user per hour (generous for seeding/testing)
+  const rateCheck = checkRateLimit(user.id, "embed", 200);
+  if (!rateCheck.allowed) {
+    return Response.json(
+      { error: `Too many requests. Please wait ${rateCheck.retryAfter}s before trying again.` },
+      { status: 429, headers: { "Retry-After": String(rateCheck.retryAfter) } },
+    );
   }
 
   // Validate entryId is a well-formed UUID before touching the database
