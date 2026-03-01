@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-AI-powered ranch assistant (hackathon MVP). Ranchers record voice notes → transcribed → stored as diary entries → queried via RAG chat ("Farm Memory") and AI-generated weekly summaries. Built on **Next.js 16 (App Router) + Supabase + Vercel AI SDK**.
+AI-powered ranch assistant. Ranchers record voice notes → transcribed → stored as diary entries → queried via RAG chat ("Farm Memory") and AI-generated weekly summaries. Built on **Next.js 16 (App Router) + Supabase + Vercel AI SDK**.
 
 ## Architecture
 
@@ -36,17 +36,6 @@ Three client factories in `lib/supabase/` — always use the correct one:
 - Migrations live in `supabase/migrations/`. Create new ones with `supabase migration new <name>`.
 - Schema reference: `docs/schema-draft.md`. RAG search function: `match_diary_entries` (pgvector cosine similarity).
 - Embeddings: OpenAI `text-embedding-3-small`, 1536 dimensions, stored in `entry_embeddings.embedding` column.
-
-## Implementation Plan
-
-The project follows a phased plan in `docs/implementation/`. Each phase file is self-contained:
-
-- **Phase A** (complete): Auth, project scaffold
-- **Phase B**: Database migration (tables, RLS, pgvector, triggers)
-- **Phase C**: CRUD UX (dashboard, diary entries, pasture/herd management)
-- **Phase D**: Seed data ("Dry Creek Ranch" demo)
-- **Phase E**: AI features (embeddings, RAG chat, weekly review, NLP tagging)
-- **Phase F**: Polish (metadata, voice capture UI, .env.example)
 
 **Always check the relevant phase doc before implementing a feature** — it contains exact SQL, component specs, and API contracts.
 
