@@ -1,4 +1,4 @@
-# Demo Script — Grit & Grain (2–3 Minutes)
+# Demo Video Script — Grit & Grain (2–3 Minutes)
 
 > **Presenter note:** The demo account is pre-loaded with 12 months of synthetic diary data for "Dry Creek Ranch." All AI responses shown are grounded in that seed data.
 
