@@ -2,28 +2,18 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { getErrorMessage } from "@/lib/supabase/errors";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-const heroImages = [
-  "/images/marketing/marketing-1.webp",
-  "/images/marketing/marketing-2.webp",
-  "/images/marketing/marketing-3.webp",
-  "/images/marketing/marketing-4.webp",
-];
+const heroImage = "/images/marketing/marketing-5.webp";
 
 export default function LoginPage() {
   const supabase = createClient();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const [imageIndex, setImageIndex] = useState(0);
-
-  useEffect(() => {
-    setImageIndex(Math.floor(Math.random() * heroImages.length));
-  }, []);
 
   const handleSignIn = useCallback(
     async (email: string, password: string) => {
@@ -58,7 +48,7 @@ export default function LoginPage() {
       {/* Image panel — side on desktop, banner on mobile */}
       <div className="relative h-48 shrink-0 lg:h-auto lg:w-1/2">
         <Image
-          src={heroImages[imageIndex]}
+          src={heroImage}
           alt=""
           fill
           className="object-cover"
@@ -73,7 +63,7 @@ export default function LoginPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="max-w-md font-serif text-2xl font-semibold leading-snug text-white"
+            className="max-w-lg font-serif text-3xl font-semibold leading-snug text-zinc-900"
           >
             Your ranch has decades of hard-won knowledge. Grit &amp; Grain makes
             sure it&apos;s never lost.
@@ -84,7 +74,7 @@ export default function LoginPage() {
         <div className="absolute inset-0 flex items-center justify-center p-6 lg:hidden">
           <Link
             href="/"
-            className="font-serif text-2xl font-semibold text-white"
+            className="font-serif text-3xl font-semibold text-zinc-900"
           >
             Grit &amp; Grain
           </Link>
