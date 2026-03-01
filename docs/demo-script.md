@@ -4,6 +4,8 @@
 
 ---
 
+> _Hi, I’m Josh Campbell. I grew up on a small hobby farm in Willard, Missouri, and I care deeply about building practical tools for people who do hard, essential work. Grit & Grain is my answer to one of agriculture’s most overlooked problems: institutional knowledge disappears when it lives only in someone’s head. With voice-first capture, grounded AI retrieval, and weekly operational summaries, Grit & Grain helps ranchers turn experience into a durable competitive advantage._
+
 ## Opening (0:00 – 0:20)
 
 > _"Every rancher I've talked to has the same problem: decades of knowledge stored entirely up here [point to head]. What happened to the north pasture in that dry year? When did they last cut hay on the south field? The answer is usually 'I think it was… maybe three years ago?' — and that uncertainty costs money."_
