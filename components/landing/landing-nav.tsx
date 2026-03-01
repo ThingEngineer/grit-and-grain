@@ -20,7 +20,10 @@ export function LandingNav() {
           : "bg-foreground/20 backdrop-blur-sm"
       }`}
     >
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <nav
+        aria-label="Main navigation"
+        className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4"
+      >
         <Link
           href="/"
           className={`font-serif text-xl font-semibold transition-colors ${

@@ -56,12 +56,12 @@ export default function SignUpPage() {
   );
 
   return (
-    <div className="flex min-h-screen flex-col bg-background lg:flex-row">
+    <main className="flex min-h-screen flex-col bg-background lg:flex-row">
       {/* Image panel — side on desktop, banner on mobile */}
       <div className="relative h-48 shrink-0 lg:h-auto lg:w-1/2">
         <Image
           src={heroImages[imageIndex]}
-          alt="Ranch landscape"
+          alt=""
           fill
           className="object-cover"
           priority
@@ -110,17 +110,24 @@ export default function SignUpPage() {
           </p>
 
           {error && (
-            <p className="mb-4 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+            <p
+              role="alert"
+              className="mb-4 rounded-md bg-destructive/10 p-3 text-sm text-destructive"
+            >
               {error}
             </p>
           )}
           {message && (
-            <p className="mb-4 rounded-md bg-green-50 p-3 text-sm text-green-600 dark:bg-green-900/20 dark:text-green-400">
+            <p
+              role="status"
+              className="mb-4 rounded-md bg-green-50 p-3 text-sm text-green-600 dark:bg-green-900/20 dark:text-green-400"
+            >
               {message}
             </p>
           )}
 
           <form
+            aria-label="Create account"
             onSubmit={(e) => {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
@@ -144,7 +151,7 @@ export default function SignUpPage() {
                 type="email"
                 required
                 autoComplete="email"
-                className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-ring"
+                className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               />
             </div>
 
@@ -162,14 +169,14 @@ export default function SignUpPage() {
                 required
                 autoComplete="new-password"
                 minLength={6}
-                className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-ring"
+                className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="mt-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+              className="mt-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               {loading ? "Creating account..." : "Sign up"}
             </button>
@@ -190,6 +197,6 @@ export default function SignUpPage() {
           </p>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

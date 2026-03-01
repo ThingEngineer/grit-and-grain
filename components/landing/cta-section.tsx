@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 export function CTASection() {
   return (
-    <section className="bg-card py-20 md:py-32">
+    <section aria-labelledby="cta-heading" className="bg-card py-20 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -14,7 +14,10 @@ export function CTASection() {
           transition={{ duration: 0.7 }}
           className="mx-auto max-w-2xl text-center"
         >
-          <h2 className="font-serif text-3xl font-semibold text-foreground md:text-5xl">
+          <h2
+            id="cta-heading"
+            className="font-serif text-3xl font-semibold text-foreground md:text-5xl"
+          >
             Speak your day. Build your legacy.
           </h2>
           <p className="mt-6 text-lg text-muted-foreground">
@@ -28,13 +31,13 @@ export function CTASection() {
           <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Link
               href="/signup"
-              className="rounded-full bg-primary px-8 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              className="rounded-full bg-primary px-8 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               Get Started Free
             </Link>
             <Link
               href="/login"
-              className="rounded-full border border-border px-8 py-3 font-medium text-foreground transition-colors hover:bg-muted"
+              className="rounded-full border border-border px-8 py-3 font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               Sign In
             </Link>

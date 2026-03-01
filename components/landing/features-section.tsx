@@ -37,7 +37,10 @@ const features = [
 
 export function FeaturesSection() {
   return (
-    <section className="bg-background py-20 md:py-32">
+    <section
+      aria-labelledby="features-heading"
+      className="bg-background py-20 md:py-32"
+    >
       <div className="mx-auto max-w-6xl px-6">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -46,7 +49,10 @@ export function FeaturesSection() {
           transition={{ duration: 0.7 }}
           className="mb-16 text-center"
         >
-          <h2 className="font-serif text-3xl font-semibold text-foreground md:text-4xl">
+          <h2
+            id="features-heading"
+            className="font-serif text-3xl font-semibold text-foreground md:text-4xl"
+          >
             The field journal that listens, remembers, and thinks alongside you
           </h2>
         </motion.div>

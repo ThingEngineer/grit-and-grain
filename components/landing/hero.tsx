@@ -12,20 +12,25 @@ const heroImages = [
 
 export function Hero() {
   const [currentImage, setCurrentImage] = useState(0);
+  const [paused, setPaused] = useState(false);
 
   const nextImage = useCallback(() => {
     setCurrentImage((prev) => (prev + 1) % heroImages.length);
   }, []);
 
   useEffect(() => {
+    if (paused) return;
     const interval = setInterval(nextImage, 6000);
     return () => clearInterval(interval);
-  }, [nextImage]);
+  }, [nextImage, paused]);
 
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden">
-      {/* Rotating background images */}
-      <div className="absolute inset-0">
+    <section
+      aria-labelledby="hero-heading"
+      className="relative flex min-h-screen items-center overflow-hidden"
+    >
+      {/* Rotating background images — decorative, hidden from screen readers */}
+      <div className="absolute inset-0" aria-hidden="true">
         <AnimatePresence mode="popLayout">
           <motion.div
             key={currentImage}
@@ -37,7 +42,7 @@ export function Hero() {
           >
             <Image
               src={heroImages[currentImage]}
-              alt="Ranch landscape"
+              alt=""
               fill
               className="object-cover"
               priority={currentImage === 0}
@@ -62,6 +67,7 @@ export function Hero() {
           </motion.div>
 
           <motion.h1
+            id="hero-heading"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
@@ -90,16 +96,38 @@ export function Hero() {
           >
             <Link
               href="/signup"
-              className="rounded-full bg-primary px-8 py-3 text-center font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              className="rounded-full bg-primary px-8 py-3 text-center font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
             >
               Get Started Free
             </Link>
             <Link
               href="/login"
-              className="rounded-full border border-white/30 px-8 py-3 text-center font-medium text-white transition-colors hover:bg-white/10"
+              className="rounded-full border border-white/30 px-8 py-3 text-center font-medium text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
             >
               Sign In
             </Link>
+          </motion.div>
+
+          {/* Slideshow pause control */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 1.0 }}
+            className="mt-6"
+          >
+            <button
+              type="button"
+              onClick={() => setPaused((p) => !p)}
+              aria-label={
+                paused
+                  ? "Play background slideshow"
+                  : "Pause background slideshow"
+              }
+              className="flex items-center gap-2 text-xs text-white/60 transition-colors hover:text-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+            >
+              <span aria-hidden="true">{paused ? "▶" : "⏸"}</span>
+              {paused ? "Resume slideshow" : "Pause slideshow"}
+            </button>
           </motion.div>
         </div>
       </div>

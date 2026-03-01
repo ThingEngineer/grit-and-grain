@@ -10,7 +10,7 @@ const quotes = [
 
 export function CalloutStrip() {
   return (
-    <section className="bg-muted py-16 md:py-24">
+    <section aria-label="Key benefits" className="bg-muted py-16 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <div className="grid gap-8 md:grid-cols-3">
           {quotes.map((quote, i) => (

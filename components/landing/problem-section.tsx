@@ -12,10 +12,16 @@ const fadeInUp = {
 
 export function ProblemSection() {
   return (
-    <section className="bg-card py-20 md:py-32">
+    <section
+      aria-labelledby="problem-heading"
+      className="bg-card py-20 md:py-32"
+    >
       <div className="mx-auto max-w-6xl px-6">
         <motion.div {...fadeInUp} className="mx-auto max-w-3xl text-center">
-          <h2 className="font-serif text-3xl font-semibold text-foreground md:text-4xl">
+          <h2
+            id="problem-heading"
+            className="font-serif text-3xl font-semibold text-foreground md:text-4xl"
+          >
             Decades of knowledge, stored entirely in your head
           </h2>
           <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
@@ -41,19 +47,25 @@ export function ProblemSection() {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="mt-12 flex justify-center gap-6"
         >
-          <div className="relative h-32 w-48 overflow-hidden rounded-lg md:h-40 md:w-56">
+          <div
+            className="relative h-32 w-48 overflow-hidden rounded-lg md:h-40 md:w-56"
+            aria-hidden="true"
+          >
             <Image
               src="/images/marketing/marketing-5.webp"
-              alt="Ranch scene"
+              alt=""
               fill
               className="object-cover"
               sizes="(max-width: 768px) 192px, 224px"
             />
           </div>
-          <div className="relative h-32 w-48 overflow-hidden rounded-lg md:h-40 md:w-56">
+          <div
+            className="relative h-32 w-48 overflow-hidden rounded-lg md:h-40 md:w-56"
+            aria-hidden="true"
+          >
             <Image
               src="/images/marketing/marketing-6.webp"
-              alt="Ranch scene"
+              alt=""
               fill
               className="object-cover"
               sizes="(max-width: 768px) 192px, 224px"
