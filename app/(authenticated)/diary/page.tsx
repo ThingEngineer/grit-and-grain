@@ -88,12 +88,12 @@ export default async function DiaryListPage({
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+        <h1 className="font-serif text-2xl font-bold text-foreground">
           Diary entries
         </h1>
         <Link
           href="/diary/new"
-          className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
         >
           + New entry
         </Link>

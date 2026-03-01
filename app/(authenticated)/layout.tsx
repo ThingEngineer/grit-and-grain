@@ -18,7 +18,7 @@ export default async function AuthenticatedLayout({
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black">
+    <div className="min-h-screen bg-background">
       <Nav userEmail={user.email ?? "Unknown"} />
       <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
     </div>

@@ -94,11 +94,11 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
       {/* Main column */}
       <div className="lg:col-span-2">
         {/* Controls */}
-        <div className="mb-6 flex flex-wrap items-end gap-4 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
+        <div className="mb-6 flex flex-wrap items-end gap-4 rounded-lg border border-border bg-card p-4">
           <div>
             <label
               htmlFor="week-start"
-              className="mb-1 block text-xs font-medium text-zinc-500 dark:text-zinc-400"
+              className="mb-1 block text-xs font-medium text-muted-foreground"
             >
               Start date
             </label>
@@ -107,13 +107,13 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
               id="week-start"
               value={weekStart}
               onChange={(e) => setWeekStart(e.target.value)}
-              className="rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-900 shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+              className="rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
           <div>
             <label
               htmlFor="week-end"
-              className="mb-1 block text-xs font-medium text-zinc-500 dark:text-zinc-400"
+              className="mb-1 block text-xs font-medium text-muted-foreground"
             >
               End date
             </label>
@@ -122,13 +122,13 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
               id="week-end"
               value={weekEnd}
               onChange={(e) => setWeekEnd(e.target.value)}
-              className="rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-900 shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+              className="rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
           <button
             onClick={generateReview}
             disabled={isLoading}
-            className="rounded-lg bg-zinc-900 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="rounded-lg bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLoading ? "Generating…" : "Generate Review"}
           </button>
@@ -143,8 +143,8 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
 
         {/* Loading */}
         {isLoading && (
-          <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center dark:border-zinc-800 dark:bg-zinc-950">
-            <div className="animate-pulse text-sm text-zinc-500 dark:text-zinc-400">
+          <div className="rounded-lg border border-border bg-card p-8 text-center">
+            <div className="animate-pulse text-sm text-muted-foreground">
               Analyzing diary entries and generating your weekly review…
             </div>
           </div>
@@ -152,20 +152,20 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
 
         {/* Review content */}
         {displayMd && !isLoading && (
-          <div className="prose prose-zinc max-w-none rounded-lg border border-zinc-200 bg-white p-6 dark:prose-invert dark:border-zinc-800 dark:bg-zinc-950">
+          <div className="prose max-w-none rounded-lg border border-border bg-card p-6">
             <Markdown>{displayMd}</Markdown>
           </div>
         )}
 
         {/* Empty state */}
         {!displayMd && !isLoading && !error && (
-          <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center dark:border-zinc-800 dark:bg-zinc-950">
+          <div className="rounded-lg border border-border bg-card p-8 text-center">
             <div className="mb-2 text-4xl">📋</div>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            <p className="text-sm text-muted-foreground">
               Select a date range and click &ldquo;Generate Review&rdquo; to get
               an AI summary of your ranch week.
             </p>
-            <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
+            <p className="mt-1 text-xs text-muted-foreground">
               In production, reviews can be scheduled (e.g. every Sunday 6pm)
               via Vercel Cron.
             </p>
@@ -175,11 +175,11 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
 
       {/* Sidebar — Previous Reviews */}
       <div>
-        <h2 className="mb-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+        <h2 className="mb-3 text-sm font-semibold text-foreground">
           Previous Reviews
         </h2>
         {previousReviews.length === 0 ? (
-          <p className="text-sm text-zinc-400 dark:text-zinc-500">
+          <p className="text-sm text-muted-foreground">
             No reviews generated yet.
           </p>
         ) : (
@@ -190,14 +190,14 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
                 onClick={() => viewPreviousReview(review)}
                 className={`w-full rounded-lg border p-3 text-left text-sm transition-colors ${
                   selectedReview === review.id
-                    ? "border-zinc-500 bg-zinc-100 dark:border-zinc-500 dark:bg-zinc-800"
-                    : "border-zinc-200 bg-white hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700"
+                    ? "border-muted-foreground bg-muted"
+                    : "border-border bg-card hover:border-muted-foreground"
                 }`}
               >
-                <div className="font-medium text-zinc-900 dark:text-zinc-50">
+                <div className="font-medium text-foreground">
                   {review.week_start} — {review.week_end}
                 </div>
-                <div className="mt-1 truncate text-xs text-zinc-500 dark:text-zinc-400">
+                <div className="mt-1 truncate text-xs text-muted-foreground">
                   {stripMarkdown(review.summary_md).slice(0, 80)}…
                 </div>
               </button>

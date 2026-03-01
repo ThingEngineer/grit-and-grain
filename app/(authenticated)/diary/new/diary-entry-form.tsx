@@ -38,7 +38,7 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
       <div>
         <label
           htmlFor="entry_date"
-          className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+          className="mb-1 block text-sm font-medium text-foreground"
         >
           Date
         </label>
@@ -48,7 +48,7 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
           name="entry_date"
           defaultValue={today}
           required
-          className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
         />
       </div>
 
@@ -56,14 +56,14 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
       <div>
         <label
           htmlFor="pasture_id"
-          className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+          className="mb-1 block text-sm font-medium text-foreground"
         >
           Pasture
         </label>
         <select
           id="pasture_id"
           name="pasture_id"
-          className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
         >
           <option value="">— None —</option>
           {pastures.map((p) => (
@@ -78,14 +78,14 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
       <div>
         <label
           htmlFor="herd_group_id"
-          className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+          className="mb-1 block text-sm font-medium text-foreground"
         >
           Herd group
         </label>
         <select
           id="herd_group_id"
           name="herd_group_id"
-          className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
         >
           <option value="">— None —</option>
           {herdGroups.map((h) => (
@@ -100,7 +100,7 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
       <div>
         <label
           htmlFor="content"
-          className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+          className="mb-1 block text-sm font-medium text-foreground"
         >
           Observation
         </label>
@@ -110,13 +110,13 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
           rows={6}
           required
           placeholder="What happened on the ranch today?"
-          className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500"
+          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
         />
       </div>
 
       {/* Tags */}
       <div>
-        <span className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+        <span className="mb-2 block text-sm font-medium text-foreground">
           Tags
         </span>
         <div className="flex flex-wrap gap-2">
@@ -129,8 +129,8 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
                 onClick={() => toggleTag(tag)}
                 className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
                   isSelected
-                    ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-50 dark:bg-zinc-50 dark:text-zinc-900"
-                    : "border-zinc-300 bg-white text-zinc-600 hover:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-600"
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-background text-muted-foreground hover:border-ring"
                 }`}
               >
                 {tag}
@@ -148,7 +148,7 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
       <div className="flex gap-3">
         <button
           type="submit"
-          className="rounded-md bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
         >
           Save entry
         </button>

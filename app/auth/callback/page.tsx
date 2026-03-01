@@ -17,8 +17,8 @@ export default function CallbackPage() {
   }, [router, supabase]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
-      <p className="text-zinc-500 dark:text-zinc-400">Signing in...</p>
+    <div className="flex min-h-screen items-center justify-center bg-background">
+      <p className="text-muted-foreground">Signing in...</p>
     </div>
   );
 }

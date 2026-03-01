@@ -62,7 +62,7 @@ export function SeedButton(props: Readonly<{ hasEntries?: boolean }>) {
           type="button"
           onClick={handleSeed}
           disabled={loading}
-          className="rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+          className="rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted disabled:opacity-50"
         >
           {loading ? "Seeding…" : "🌾 Load Demo Farm (Dry Creek Ranch)"}
         </button>
@@ -71,7 +71,7 @@ export function SeedButton(props: Readonly<{ hasEntries?: boolean }>) {
           type="button"
           onClick={handleRemove}
           disabled={loading}
-          className="rounded-md border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50 dark:border-red-800 dark:bg-zinc-900 dark:text-red-400 dark:hover:bg-red-950"
+          className="rounded-md border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50"
         >
           {loading ? "Removing…" : "🗑 Remove Demo Data"}
         </button>

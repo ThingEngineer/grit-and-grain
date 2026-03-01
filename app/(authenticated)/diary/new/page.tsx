@@ -23,7 +23,7 @@ export default async function NewDiaryEntryPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+      <h1 className="mb-6 font-serif text-2xl font-bold text-foreground">
         New diary entry
       </h1>
       <DiaryEntryForm pastures={pastures ?? []} herdGroups={herdGroups ?? []} />

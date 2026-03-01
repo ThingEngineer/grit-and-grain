@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 type NavProps = Readonly<{
   userEmail: string;
@@ -20,13 +21,13 @@ export function Nav({ userEmail }: NavProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
+    <nav className="border-b border-border bg-background">
       {/* Main bar */}
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
         <div className="flex items-center gap-6">
           <Link
             href="/dashboard"
-            className="text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50"
+            className="font-serif text-lg font-bold tracking-tight text-foreground"
             onClick={() => setMenuOpen(false)}
           >
             Grit &amp; Grain
@@ -38,7 +39,7 @@ export function Nav({ userEmail }: NavProps) {
               <Link
                 key={href}
                 href={href}
-                className="text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 {label}
               </Link>
@@ -46,71 +47,73 @@ export function Nav({ userEmail }: NavProps) {
           </div>
         </div>
 
-        {/* Desktop: email + sign out */}
-        <div className="hidden items-center gap-4 md:flex">
-          <span className="text-sm text-zinc-500 dark:text-zinc-400">
-            {userEmail}
-          </span>
+        {/* Desktop: toggle + email + sign out */}
+        <div className="hidden items-center gap-3 md:flex">
+          <ThemeToggle />
+          <span className="text-sm text-muted-foreground">{userEmail}</span>
           <form action="/api/auth/sign-out" method="POST">
             <button
               type="submit"
-              className="rounded-md bg-zinc-100 px-3 py-1.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+              className="rounded-md bg-muted px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/70"
             >
               Sign out
             </button>
           </form>
         </div>
 
-        {/* Mobile: hamburger button */}
-        <button
-          type="button"
-          aria-label="Toggle menu"
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((prev) => !prev)}
-          className="flex h-9 w-9 items-center justify-center rounded-md text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 md:hidden"
-        >
-          {menuOpen ? (
-            /* X icon */
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          ) : (
-            /* Hamburger icon */
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          )}
-        </button>
+        {/* Mobile: theme toggle + hamburger button */}
+        <div className="flex items-center gap-1 md:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            aria-label="Toggle menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((prev) => !prev)}
+            className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            {menuOpen ? (
+              /* X icon */
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            ) : (
+              /* Hamburger icon */
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Mobile dropdown menu */}
       {menuOpen && (
-        <div className="border-t border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 md:hidden">
+        <div className="border-t border-border bg-background md:hidden">
           <div className="mx-auto max-w-5xl px-4 pb-4">
             <div className="flex flex-col">
               {navLinks.map(({ href, label }) => (
@@ -118,20 +121,18 @@ export function Nav({ userEmail }: NavProps) {
                   key={href}
                   href={href}
                   onClick={() => setMenuOpen(false)}
-                  className="py-3 text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+                  className="py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                 >
                   {label}
                 </Link>
               ))}
             </div>
-            <div className="mt-3 flex items-center justify-between border-t border-zinc-100 pt-3 dark:border-zinc-800">
-              <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                {userEmail}
-              </span>
+            <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
+              <span className="text-sm text-muted-foreground">{userEmail}</span>
               <form action="/api/auth/sign-out" method="POST">
                 <button
                   type="submit"
-                  className="rounded-md bg-zinc-100 px-3 py-1.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                  className="rounded-md bg-muted px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/70"
                 >
                   Sign out
                 </button>

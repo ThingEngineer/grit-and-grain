@@ -12,10 +12,10 @@ export default async function ReviewPage() {
 
   return (
     <div>
-      <h1 className="mb-4 text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+      <h1 className="mb-4 font-serif text-2xl font-bold text-foreground">
         Weekly Review
       </h1>
-      <p className="mb-6 text-sm text-zinc-500 dark:text-zinc-400">
+      <p className="mb-6 text-sm text-muted-foreground">
         AI-generated summaries of your ranch week — key events, rainfall,
         rotation, hay, and herd health.
       </p>

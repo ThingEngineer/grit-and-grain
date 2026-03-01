@@ -15,23 +15,23 @@ export default async function HerdsPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+      <h1 className="mb-6 font-serif text-2xl font-bold text-foreground">
         Herd groups
       </h1>
 
       {/* Add herd group form */}
       <form
         action={createHerdGroup}
-        className="mb-8 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"
+        className="mb-8 rounded-lg border border-border bg-card p-4"
       >
-        <h2 className="mb-4 text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+        <h2 className="mb-4 text-sm font-semibold text-foreground">
           Add a herd group
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <label
               htmlFor="name"
-              className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+              className="mb-1 block text-sm font-medium text-foreground"
             >
               Name *
             </label>
@@ -41,13 +41,13 @@ export default async function HerdsPage() {
               name="name"
               required
               placeholder="e.g. Main cow herd"
-              className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
           <div>
             <label
               htmlFor="species"
-              className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+              className="mb-1 block text-sm font-medium text-foreground"
             >
               Species
             </label>
@@ -56,13 +56,13 @@ export default async function HerdsPage() {
               id="species"
               name="species"
               placeholder="e.g. Cattle"
-              className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
           <div>
             <label
               htmlFor="head_count"
-              className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+              className="mb-1 block text-sm font-medium text-foreground"
             >
               Head count
             </label>
@@ -72,13 +72,13 @@ export default async function HerdsPage() {
               name="head_count"
               min="0"
               placeholder="e.g. 50"
-              className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
           <div>
             <label
               htmlFor="notes"
-              className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+              className="mb-1 block text-sm font-medium text-foreground"
             >
               Notes
             </label>
@@ -87,13 +87,13 @@ export default async function HerdsPage() {
               id="notes"
               name="notes"
               placeholder="Optional notes"
-              className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
         </div>
         <button
           type="submit"
-          className="mt-4 rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="mt-4 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
         >
           Add herd group
         </button>
@@ -101,40 +101,40 @@ export default async function HerdsPage() {
 
       {/* Herd groups list */}
       {herdGroups && herdGroups.length > 0 ? (
-        <div className="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
+        <div className="overflow-hidden rounded-lg border border-border">
           <table className="w-full text-left text-sm">
-            <thead className="bg-zinc-50 dark:bg-zinc-900">
+            <thead className="bg-muted">
               <tr>
-                <th className="px-4 py-3 font-medium text-zinc-700 dark:text-zinc-300">
+                <th className="px-4 py-3 font-medium text-foreground">
                   Name
                 </th>
-                <th className="px-4 py-3 font-medium text-zinc-700 dark:text-zinc-300">
+                <th className="px-4 py-3 font-medium text-foreground">
                   Species
                 </th>
-                <th className="px-4 py-3 font-medium text-zinc-700 dark:text-zinc-300">
+                <th className="px-4 py-3 font-medium text-foreground">
                   Head count
                 </th>
-                <th className="px-4 py-3 font-medium text-zinc-700 dark:text-zinc-300">
+                <th className="px-4 py-3 font-medium text-foreground">
                   Notes
                 </th>
-                <th className="px-4 py-3 font-medium text-zinc-700 dark:text-zinc-300">
+                <th className="px-4 py-3 font-medium text-foreground">
                   <span className="sr-only">Actions</span>
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-200 bg-white dark:divide-zinc-800 dark:bg-zinc-950">
+            <tbody className="divide-y divide-border bg-card">
               {herdGroups.map((group) => (
                 <tr key={group.id}>
-                  <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-50">
+                  <td className="px-4 py-3 font-medium text-foreground">
                     {group.name}
                   </td>
-                  <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
+                  <td className="px-4 py-3 text-muted-foreground">
                     {group.species ?? "—"}
                   </td>
-                  <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
+                  <td className="px-4 py-3 text-muted-foreground">
                     {group.head_count ?? "—"}
                   </td>
-                  <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
+                  <td className="px-4 py-3 text-muted-foreground">
                     {group.notes ?? "—"}
                   </td>
                   <td className="px-4 py-3 text-right">
@@ -154,8 +154,8 @@ export default async function HerdsPage() {
           </table>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-zinc-200 py-12 dark:border-zinc-800">
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-border py-12">
+          <p className="text-sm text-muted-foreground">
             No herd groups yet. Add one above to get started.
           </p>
         </div>
