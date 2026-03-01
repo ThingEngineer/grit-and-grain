@@ -23,7 +23,7 @@ This is the **highest-impact phase for the judges**. Implement:
 ### E.1 — Install AI SDK packages
 
 ```bash
-pnpm add ai @ai-sdk/openai @ai-sdk/react
+pnpm add ai @ai-sdk/openai @ai-sdk/react react-markdown
 ```
 
 Verify in `package.json` that these are added:
@@ -31,6 +31,7 @@ Verify in `package.json` that these are added:
 - `ai` — Vercel AI SDK core
 - `@ai-sdk/openai` — OpenAI-compatible provider (embeddings + all chat models via Vercel AI Gateway)
 - `@ai-sdk/react` — React hooks (`useChat`)
+- `react-markdown` — renders AI-generated markdown responses in the chat and review UI
 
 ---
 
@@ -309,11 +310,12 @@ export async function POST(request: Request) {
 
 Create `app/(authenticated)/chat/page.tsx`:
 
-Use the Vercel AI SDK's `useChat` hook for a streaming chat experience:
+Use the Vercel AI SDK's `useChat` hook for a streaming chat experience. AI responses are streamed as markdown — render them with `react-markdown` and `prose-sm` Tailwind classes. User messages are plain text and should use `whitespace-pre-wrap`.
 
 ```typescript
 'use client';
 import { useChat } from '@ai-sdk/react';
+import Markdown from 'react-markdown';
 
 export default function ChatPage() {
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
@@ -325,8 +327,14 @@ export default function ChatPage() {
       <h1>Farm Memory</h1>
       <div className="messages">
         {messages.map((m) => (
-          <div key={m.id} className={m.role === 'user' ? 'user' : 'assistant'}>
-            {m.content}
+          <div key={m.id} className={m.role === 'user' ? 'user-bubble' : 'assistant-bubble'}>
+            {m.role === 'user' ? (
+              <div className="whitespace-pre-wrap">{m.content}</div>
+            ) : (
+              <div className="prose prose-zinc prose-sm max-w-none dark:prose-invert prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-li:my-0">
+                <Markdown>{m.content}</Markdown>
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -341,7 +349,7 @@ export default function ChatPage() {
 
 **Key UX elements:**
 
-- Show "Sources used" section after AI response (display the retrieved entry dates/pasture names)
+- AI responses rendered as markdown (headings, bold, lists, etc.) using `prose-sm` sizing with tight spacing so content feels natural inside chat bubbles
 - Loading state while AI is streaming
 - Placeholder suggestions: "When did we last rest the south pasture?"
 
@@ -352,6 +360,8 @@ export default function ChatPage() {
 Create `app/api/ai/weekly-review/route.ts`:
 
 **Note:** The `chatModel` exported from `lib/ai/gateway.ts` automatically routes through Vercel AI Gateway to `anthropic/claude-opus-4.5` (or your chosen model).
+
+**Rendering note:** The endpoint returns a `summary_md` field containing markdown. The client that renders this (`app/(authenticated)/review/review-client.tsx`) must wrap `<Markdown>` in a `prose prose-zinc max-w-none dark:prose-invert` container. For the "Previous Reviews" sidebar list, strip raw markdown characters from the preview snippet before displaying — implement a `stripMarkdown()` helper that removes `#`, `**`, list markers, etc., so the 80-character preview shows clean plain text.
 
 **Flow:**
 

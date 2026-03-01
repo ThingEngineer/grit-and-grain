@@ -151,6 +151,8 @@ Quick visual check across all pages:
 - Cards/containers have consistent border-radius and spacing
 - Buttons use the same style (rounded-full or rounded-lg — pick one)
 - Typography: headings are consistent sizes
+- AI-generated content (chat responses, weekly reviews) is wrapped in `prose prose-zinc max-w-none dark:prose-invert` so markdown headings, lists, and bold text render correctly — verify `@tailwindcss/typography` is installed and registered in `globals.css`
+- Sidebar/list previews of markdown content (e.g. Previous Reviews) display clean plain text — strip `#`, `**`, list markers before slicing the preview string
 
 ---
 

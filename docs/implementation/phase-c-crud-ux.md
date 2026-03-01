@@ -28,6 +28,25 @@ export const metadata: Metadata = {
 
 ---
 
+### C.1a — Install and configure Tailwind Typography plugin
+
+AI-generated content (weekly reviews, chat responses) is returned as markdown. Install the typography plugin so `prose` utility classes render it correctly:
+
+```bash
+pnpm add -D @tailwindcss/typography
+```
+
+Then register the plugin in `app/globals.css`:
+
+```css
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+```
+
+This enables the `prose`, `prose-zinc`, `prose-invert`, and `prose-sm` classes used on AI-rendered content throughout the app.
+
+---
+
 ### C.2 — Create navigation component
 
 Create `components/nav.tsx` — a top navigation bar shared across all authenticated pages.
@@ -189,6 +208,7 @@ Create these in `components/`:
 ## Checklist
 
 - [ ] Layout metadata updated to "Grit & Grain"
+- [ ] `@tailwindcss/typography` installed and registered in `globals.css`
 - [ ] Navigation component created
 - [ ] Auth layout wrapper (route group or per-page)
 - [ ] Dashboard rebuilt with recent entries + quick stats
