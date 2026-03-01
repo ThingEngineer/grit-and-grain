@@ -37,7 +37,6 @@ export default async function DashboardPage() {
     .order("entry_date", { ascending: false })
     .limit(5);
 
-  const displayName = profile?.ranch_name || profile?.full_name || user!.email;
   const hasEntries = (entryCount ?? 0) > 0;
 
   return (

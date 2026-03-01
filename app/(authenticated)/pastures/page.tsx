@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import { createPasture, deletePasture } from "./actions";
-import { EmptyState } from "@/components/empty-state";
 
 export default async function PasturesPage() {
   const supabase = await createClient();
