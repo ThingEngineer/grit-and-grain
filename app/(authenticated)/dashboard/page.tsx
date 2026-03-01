@@ -18,11 +18,7 @@ export default async function DashboardPage() {
     { count: pastureCount },
     { data: entries },
   ] = await Promise.all([
-    supabase
-      .from("profiles")
-      .select("ranch_name")
-      .eq("id", user!.id)
-      .single(),
+    supabase.from("profiles").select("ranch_name").eq("id", user!.id).single(),
     supabase
       .from("diary_entries")
       .select("*", { count: "exact", head: true })
