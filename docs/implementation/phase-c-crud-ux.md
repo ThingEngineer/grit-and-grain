@@ -43,7 +43,7 @@ Then register the plugin in `app/globals.css`:
 @plugin "@tailwindcss/typography";
 ```
 
-This enables the `prose`, `prose-zinc`, `prose-invert`, and `prose-sm` classes used on AI-rendered content throughout the app.
+This enables the `prose` and `prose-sm` classes used on AI-rendered content throughout the app. Dark mode is automatically handled by the design system.
 
 ---
 
@@ -54,15 +54,25 @@ Create `components/nav.tsx` — a top navigation bar shared across all authentic
 **Links:**
 
 - Dashboard (`/dashboard`)
+- Diary (`/diary`)
+- Pastures (`/pastures`)
+- Herds (`/herds`)
 - Farm Memory (`/chat`)
 - Weekly Review (`/review`)
 
 **Right side:**
 
 - User email (from server-side session)
+- Theme toggle (dark/light mode via `<ThemeToggle />` component from Phase G)
 - Sign out button (POST to `/api/auth/sign-out`)
 
-Keep it minimal — Tailwind, no component library. A horizontal bar with links.
+Use design tokens for styling:
+
+- Container: `border-b border-border bg-background`
+- Nav links: `text-muted-foreground` (default), `text-foreground` (hover)
+- Title: `font-serif text-lg font-bold text-foreground`
+
+The `font-serif` class applies Newsreader; see [Phase G](phase-g-design-system.md) for the complete design token reference.
 
 ---
 
@@ -201,7 +211,15 @@ Same pattern as pastures. Create `app/(authenticated)/herds/page.tsx`:
 Create these in `components/`:
 
 - **`diary-entry-card.tsx`** — displays a single diary entry (date, pasture, content snippet, tags)
+  - Use `bg-card` for card background, `border-border` for border
+  - Dates: `text-card-foreground`
+  - Tags: `bg-muted text-muted-foreground`
+  - Pasture badge: `bg-primary/10 text-primary`
 - **`empty-state.tsx`** — "No entries yet" message with CTA button (used on dashboard + diary list)
+  - Border: `border-border`
+  - Button: `bg-primary text-primary-foreground hover:bg-primary/90`
+
+For all styling, use design tokens from [Phase G](phase-g-design-system.md) instead of hardcoded colors.
 
 ---
 
@@ -217,4 +235,6 @@ Create these in `components/`:
 - [ ] Pasture management (list + add)
 - [ ] Herd group management (list + add)
 - [ ] Reusable `diary-entry-card` component
-- [ ] All pages use consistent styling (Tailwind)
+- [ ] All pages use design tokens from Phase G (bg-background, text-foreground, bg-card, etc.)
+- [ ] Headings use `font-serif` class for Newsreader font
+- [ ] Theme toggle integrated in nav (appears on desktop and mobile)

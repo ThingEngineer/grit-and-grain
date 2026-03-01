@@ -1,8 +1,8 @@
 # Phase F — Polish & Demo Readiness
 
 > **Estimated time:** 1–2 hours
-> **Prerequisite:** Phases B–E complete (or at least B + C + D)
-> **Reference:** [demo-script.md](../demo-script.md), [README.md](../../README.md)
+> **Prerequisite:** Phases B–E complete (or at least B + C + D); Phase G (design system) should be implemented first for consistent styling
+> **Reference:** [demo-script.md](../demo-script.md), [README.md](../../README.md), [phase-g-design-system.md](phase-g-design-system.md)
 
 ---
 
@@ -102,10 +102,13 @@ export function VoiceRecorder({ onTranscript }: { onTranscript: (text: string) =
 
   return (
     <div>
-      <button onClick={isListening ? stopListening : startListening}>
+      <button
+        onClick={isListening ? stopListening : startListening}
+        className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+      >
         {isListening ? '⏹ Stop' : '🎙 Record'}
       </button>
-      {transcript && <p className="text-sm text-zinc-500 mt-2">{transcript}</p>}
+      {transcript && <p className="text-sm text-muted-foreground mt-2">{transcript}</p>}
     </div>
   );
 }
@@ -144,15 +147,17 @@ export const metadata: Metadata = {
 
 ### F.5 — Style consistency pass
 
-Quick visual check across all pages:
+Verify all pages follow the design system from [Phase G](phase-g-design-system.md):
 
-- Consistent color scheme (zinc/neutral palette from Tailwind)
-- Dark mode works (if using `dark:` classes)
-- Cards/containers have consistent border-radius and spacing
-- Buttons use the same style (rounded-full or rounded-lg — pick one)
-- Typography: headings are consistent sizes
-- AI-generated content (chat responses, weekly reviews) is wrapped in `prose prose-zinc max-w-none dark:prose-invert` so markdown headings, lists, and bold text render correctly — verify `@tailwindcss/typography` is installed and registered in `globals.css`
-- Sidebar/list previews of markdown content (e.g. Previous Reviews) display clean plain text — strip `#`, `**`, list markers before slicing the preview string
+- **Color tokens:** All colors use design tokens (`bg-background`, `text-foreground`, `bg-card`, `border-border`, `text-muted-foreground`, `bg-primary`, etc.)
+- **No hardcoded colors:** Never use `bg-zinc-*`, `dark:bg-zinc-*`, `text-gray-*`, etc. — use the design token system exclusively
+- **Typography:** Headings use `font-serif` (Newsreader), body text uses the default `font-sans` (Space Grotesk)
+- **Dark mode:** Automatically handled via `.dark` class on `<html>` element; no `dark:` class duplication needed with the token system
+- **AI-generated content:** Wrap markdown content in `prose max-w-none` (dark mode styling is automatic via CSS custom properties)
+- **Sidebar/list previews:** Display clean plain text by stripping markdown syntax (`#`, `**`, list markers) before slicing strings
+- **Focus rings:** Use the `ring` token color (`--ring: oklch(0.45 0.12 60)`); Tailwind focus utilities apply automatically
+
+Refer to [phase-g-design-system.md](phase-g-design-system.md) for the complete color palette, typography reference, and token mapping.
 
 ---
 
