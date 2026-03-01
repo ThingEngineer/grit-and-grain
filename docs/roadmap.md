@@ -220,14 +220,14 @@ _Goal: Grit & Grain should be a hub, not a silo._
 
 ## Ongoing / Cross-Cutting Concerns
 
-| Area | Work Items |
-|---|---|
-| **Performance** | Paginate diary list at 50 entries; lazy-load embeddings; edge caching for Weekly Review |
-| **Accessibility** | WCAG 2.1 AA audit; keyboard-navigable voice recorder; sufficient colour contrast |
-| **i18n** | Spanish (US/MX market), Portuguese (Brazil), French (Canada) |
-| **Privacy & Compliance** | GDPR data-export endpoint; CCPA opt-out; SOC 2 Type I (if enterprise tier pursued) |
-| **Testing** | E2E Playwright suite for critical paths (login → record → chat); load test RAG retrieval |
-| **Observability** | Vercel AI Gateway usage dashboards; Sentry error tracking; Datadog RUM for field UX |
+| Area                     | Work Items                                                                               |
+| ------------------------ | ---------------------------------------------------------------------------------------- |
+| **Performance**          | Paginate diary list at 50 entries; lazy-load embeddings; edge caching for Weekly Review  |
+| **Accessibility**        | WCAG 2.1 AA audit; keyboard-navigable voice recorder; sufficient colour contrast         |
+| **i18n**                 | Spanish (US/MX market), Portuguese (Brazil), French (Canada)                             |
+| **Privacy & Compliance** | GDPR data-export endpoint; CCPA opt-out; SOC 2 Type I (if enterprise tier pursued)       |
+| **Testing**              | E2E Playwright suite for critical paths (login → record → chat); load test RAG retrieval |
+| **Observability**        | Vercel AI Gateway usage dashboards; Sentry error tracking; Datadog RUM for field UX      |
 
 ---
 
