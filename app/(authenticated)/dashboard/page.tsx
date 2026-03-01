@@ -14,7 +14,7 @@ export default async function DashboardPage() {
   // Fetch profile for ranch name
   const { data: profile } = await supabase
     .from("profiles")
-    .select("ranch_name, full_name")
+    .select("ranch_name")
     .eq("id", user!.id)
     .single();
 
@@ -41,14 +41,13 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      {/* Welcome header */}
+      {/* Dashboard header */}
       <div className="mb-8">
-        <h1 className="font-serif font-serif text-2xl font-bold text-foreground">
-          Welcome back, {profile?.full_name || user!.email}
+        <h1 className="font-serif text-2xl font-bold text-foreground">
+          {profile?.ranch_name || "Dashboard"}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {profile?.ranch_name ? `${profile.ranch_name} · ` : ""}Your ranch at a
-          glance.
+          Your ranch at a glance.
         </p>
       </div>
 
@@ -58,9 +57,7 @@ export default async function DashboardPage() {
           <p className="font-serif font-serif text-2xl font-bold text-foreground">
             {entryCount ?? 0}
           </p>
-          <p className="text-sm text-muted-foreground">
-            Diary entries
-          </p>
+          <p className="text-sm text-muted-foreground">Diary entries</p>
         </div>
         <div className="rounded-lg border border-border bg-card p-4">
           <p className="font-serif font-serif text-2xl font-bold text-foreground">

@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { ProfileMenu } from "@/components/profile-menu";
 
 type NavProps = Readonly<{
-  userEmail: string;
+  userName: string;
 }>;
 
 const navLinks = [
@@ -17,7 +18,7 @@ const navLinks = [
   { href: "/review", label: "Weekly Review" },
 ];
 
-export function Nav({ userEmail }: NavProps) {
+export function Nav({ userName }: NavProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -47,18 +48,10 @@ export function Nav({ userEmail }: NavProps) {
           </div>
         </div>
 
-        {/* Desktop: toggle + email + sign out */}
+        {/* Desktop: toggle + profile menu */}
         <div className="hidden items-center gap-3 md:flex">
           <ThemeToggle />
-          <span className="text-sm text-muted-foreground">{userEmail}</span>
-          <form action="/api/auth/sign-out" method="POST">
-            <button
-              type="submit"
-              className="rounded-md bg-muted px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/70"
-            >
-              Sign out
-            </button>
-          </form>
+          <ProfileMenu userName={userName} />
         </div>
 
         {/* Mobile: theme toggle + hamburger button */}
@@ -127,16 +120,34 @@ export function Nav({ userEmail }: NavProps) {
                 </Link>
               ))}
             </div>
-            <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
-              <span className="text-sm text-muted-foreground">{userEmail}</span>
-              <form action="/api/auth/sign-out" method="POST">
-                <button
-                  type="submit"
-                  className="rounded-md bg-muted px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/70"
-                >
-                  Sign out
-                </button>
-              </form>
+            <div className="mt-3 flex flex-col border-t border-border pt-3">
+              <Link
+                href="/profile"
+                onClick={() => setMenuOpen(false)}
+                className="py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Profile
+              </Link>
+              <Link
+                href="/account"
+                onClick={() => setMenuOpen(false)}
+                className="py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Account
+              </Link>
+              <div className="mt-1 flex items-center justify-between border-t border-border pt-3">
+                <span className="text-sm text-muted-foreground">
+                  {userName}
+                </span>
+                <form action="/api/auth/sign-out" method="POST">
+                  <button
+                    type="submit"
+                    className="rounded-md bg-muted px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/70"
+                  >
+                    Sign out
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
