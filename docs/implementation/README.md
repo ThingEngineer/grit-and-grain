@@ -22,14 +22,14 @@ Start from Phase B and work down. Each phase is designed so you can **stop after
 
 **Recommendation:** Implement Phase G (Design System) early, before or alongside Phase C, to ensure consistent styling across all pages.
 
-| Phase | File                                                 | Description                                                                                 | Status      | Est. Time |
-| ----- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------- | ----------- | --------- |
-| **G** | [phase-g-design-system.md](phase-g-design-system.md) | Light mode default, dark mode toggle, design tokens (colors, typography), theme persistence | Complete    | 1–2 hrs   |
-| **B** | [phase-b-database.md](phase-b-database.md)           | Supabase migration: tables, RLS, indexes, triggers, pgvector, functions                     | Complete    | 1–2 hrs   |
-| **C** | [phase-c-crud-ux.md](phase-c-crud-ux.md)             | Dashboard, diary entry form/list, pasture/herd management, app layout (use Phase G tokens)  | Complete    | 2–3 hrs   |
-| **D** | [phase-d-seed-data.md](phase-d-seed-data.md)         | Seed API route: "Dry Creek Ranch" demo data (pastures, herds, 12 months of diary entries)   | Complete    | 1–2 hrs   |
-| **E** | [phase-e-ai-features.md](phase-e-ai-features.md)     | Vercel AI SDK + Gateway: embeddings, Farm Memory chat (RAG), Weekly Review, NLP tagging     | Complete    | 3–4 hrs   |
-| **F** | [phase-f-polish.md](phase-f-polish.md)               | Layout metadata, .env.example, voice capture UI, final README check                         | In Progress | 1–2 hrs   |
+| Phase | File                                                 | Description                                                                                 | Status   | Est. Time |
+| ----- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------- | -------- | --------- |
+| **G** | [phase-g-design-system.md](phase-g-design-system.md) | Light mode default, dark mode toggle, design tokens (colors, typography), theme persistence | Complete | 1–2 hrs   |
+| **B** | [phase-b-database.md](phase-b-database.md)           | Supabase migration: tables, RLS, indexes, triggers, pgvector, functions                     | Complete | 1–2 hrs   |
+| **C** | [phase-c-crud-ux.md](phase-c-crud-ux.md)             | Dashboard, diary entry form/list, pasture/herd management, app layout (use Phase G tokens)  | Complete | 2–3 hrs   |
+| **D** | [phase-d-seed-data.md](phase-d-seed-data.md)         | Seed API route: "Dry Creek Ranch" demo data (pastures, herds, 12 months of diary entries)   | Complete | 1–2 hrs   |
+| **E** | [phase-e-ai-features.md](phase-e-ai-features.md)     | Vercel AI SDK + Gateway: embeddings, Farm Memory chat (RAG), Weekly Review, NLP tagging     | Complete | 3–4 hrs   |
+| **F** | [phase-f-polish.md](phase-f-polish.md)               | Layout metadata, .env.example, voice capture UI, final README check                         | Complete | 1–2 hrs   |
 
 ---
 
