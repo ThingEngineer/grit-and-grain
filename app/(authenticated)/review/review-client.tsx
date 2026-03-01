@@ -115,8 +115,10 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
             />
           </div>
           <button
+            type="button"
             onClick={generateReview}
             disabled={isLoading}
+            aria-busy={isLoading}
             className="rounded-lg bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLoading ? "Generating…" : "Generate Review"}
@@ -125,14 +127,21 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
 
         {/* Error */}
         {error && (
-          <div className="mb-4 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
+          <div
+            role="alert"
+            className="mb-4 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
+          >
             {error}
           </div>
         )}
 
         {/* Loading */}
         {isLoading && (
-          <div className="rounded-lg border border-border bg-card p-8 text-center">
+          <div
+            role="status"
+            aria-live="polite"
+            className="rounded-lg border border-border bg-card p-8 text-center"
+          >
             <div className="animate-pulse text-sm text-muted-foreground">
               Analyzing diary entries and generating your weekly review…
             </div>

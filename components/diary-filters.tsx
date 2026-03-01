@@ -65,6 +65,9 @@ export function DiaryFilters({
     >
       {/* Search bar */}
       <div className="relative">
+        <label htmlFor="search-entries" className="sr-only">
+          Search entries
+        </label>
         <svg
           className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
           fill="none"
@@ -81,6 +84,7 @@ export function DiaryFilters({
         </svg>
         <input
           type="search"
+          id="search-entries"
           placeholder="Search entries…"
           defaultValue={q}
           onChange={(e) => push({ q: e.target.value || null })}
@@ -92,6 +96,7 @@ export function DiaryFilters({
       <div className="flex flex-wrap gap-2">
         {/* Pasture filter */}
         <select
+          aria-label="Filter by pasture"
           value={pastureId}
           onChange={(e) => push({ pasture: e.target.value || null })}
           className="rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground focus:border-ring focus:outline-none"
@@ -106,6 +111,7 @@ export function DiaryFilters({
 
         {/* Herd group filter */}
         <select
+          aria-label="Filter by herd group"
           value={herdGroupId}
           onChange={(e) => push({ herd: e.target.value || null })}
           className="rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground focus:border-ring focus:outline-none"
@@ -121,17 +127,17 @@ export function DiaryFilters({
         {/* Date range */}
         <input
           type="date"
+          aria-label="From date"
           value={dateFrom}
           onChange={(e) => push({ from: e.target.value || null })}
           className="rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground focus:border-ring focus:outline-none"
-          title="From date"
         />
         <input
           type="date"
+          aria-label="To date"
           value={dateTo}
           onChange={(e) => push({ to: e.target.value || null })}
           className="rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground focus:border-ring focus:outline-none"
-          title="To date"
         />
 
         {hasFilters && (
@@ -153,6 +159,7 @@ export function DiaryFilters({
               <button
                 key={tag}
                 onClick={() => push({ tag: isActive ? null : tag })}
+                aria-pressed={isActive}
                 className={`rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
                   isActive
                     ? "bg-foreground text-background"

@@ -10,6 +10,7 @@ type ProfileMenuProps = Readonly<{
 export function ProfileMenu({ userName }: ProfileMenuProps) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const firstItemRef = useRef<HTMLAnchorElement>(null);
 
   // Close on outside click
   useEffect(() => {
@@ -31,6 +32,14 @@ export function ProfileMenu({ userName }: ProfileMenuProps) {
     }
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
+  }, [open]);
+
+  // Focus first menu item when menu opens
+  useEffect(() => {
+    if (open) {
+      // Defer to allow the menu to render
+      requestAnimationFrame(() => firstItemRef.current?.focus());
+    }
   }, [open]);
 
   return (
@@ -80,9 +89,15 @@ export function ProfileMenu({ userName }: ProfileMenuProps) {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-1 w-48 rounded-lg border border-border bg-popover py-1 shadow-lg">
+        <div
+          role="menu"
+          aria-label="User menu"
+          className="absolute right-0 top-full z-50 mt-1 w-48 rounded-lg border border-border bg-popover py-1 shadow-lg"
+        >
           <Link
             href="/profile"
+            role="menuitem"
+            ref={firstItemRef}
             onClick={() => setOpen(false)}
             className="flex w-full items-center gap-2 px-3 py-2 text-sm text-popover-foreground transition-colors hover:bg-muted"
           >
@@ -107,6 +122,7 @@ export function ProfileMenu({ userName }: ProfileMenuProps) {
           </Link>
           <Link
             href="/account"
+            role="menuitem"
             onClick={() => setOpen(false)}
             className="flex w-full items-center gap-2 px-3 py-2 text-sm text-popover-foreground transition-colors hover:bg-muted"
           >
@@ -132,6 +148,7 @@ export function ProfileMenu({ userName }: ProfileMenuProps) {
           <form action="/api/auth/sign-out" method="POST">
             <button
               type="submit"
+              role="menuitem"
               className="flex w-full items-center gap-2 px-3 py-2 text-sm text-popover-foreground transition-colors hover:bg-muted"
             >
               <svg

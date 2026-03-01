@@ -110,6 +110,50 @@ This enables model swaps without code changes.
 
 ---
 
+## Accessibility
+
+The authenticated app targets **WCAG 2.1 Level AA** conformance. The following measures are in place across all `app/(authenticated)` pages and shared components:
+
+### Keyboard Navigation & Focus Management
+
+- **Skip-to-content link** — a visually-hidden `<a href="#main-content">` is the first focusable element on every authenticated page; it becomes visible on focus so keyboard users can bypass the nav bar.
+- **`<main id="main-content">`** — the primary landmark receives focus when the skip link is activated (`tabIndex={-1}`, `outline-none`).
+- **Profile menu** — focuses the first menu item (`Profile`) via `requestAnimationFrame` when the dropdown opens, so keyboard users land in the menu immediately.
+- **Mobile nav** — the hamburger button exposes `aria-controls="mobile-menu"` pointing to the dropdown; `aria-expanded` reflects open/closed state.
+
+### Landmarks & Semantic Structure
+
+- `<nav aria-label="Main navigation">` identifies the nav as a distinct landmark (important when multiple `<nav>` elements exist on a page).
+- `<main>` serves as the page's main content landmark on every authenticated page.
+- Profile menu dropdown uses `role="menu"` / `role="menuitem"` per the ARIA Authoring Practices menu button pattern.
+- Data tables (Pastures, Herds) include `scope="col"` on all `<th>` elements (WCAG 1.3.1).
+
+### Active / State Communication
+
+- Nav links carry `aria-current="page"` on the matching route (both desktop and mobile lists).
+- Tag-filter buttons and diary-entry tag toggles use `aria-pressed` to communicate selected state to screen readers.
+- The voice recorder button exposes `aria-label` ("Start voice recording" / "Stop recording") and `aria-pressed` reflecting live recording state; the decorative 🎙 emoji is wrapped in `aria-hidden="true"`.
+
+### Live Regions & Dynamic Content
+
+| Location | Pattern | Behaviour |
+|----------|---------|-----------|
+| Chat message list | `role="log"` + `aria-live="polite"` | New assistant messages are announced as they arrive |
+| Chat "Thinking…" spinner | `role="status"` + `aria-live="polite"` | Loading state announced without interrupting reading |
+| Chat error | `role="alert"` | Error announced immediately |
+| Weekly Review loading | `role="status"` + `aria-live="polite"` | Generation progress announced |
+| Weekly Review error | `role="alert"` | Error announced immediately |
+| Generate Review button | `aria-busy={isLoading}` | Signals busy state to assistive technology |
+| Profile / Account banners | `role="alert"` | Success and error messages announced on page load |
+
+### Form Labelling
+
+- All `<input>` and `<select>` elements have either an associated `<label>` or an `aria-label` attribute — no unlabelled controls.
+- Diary filter controls (search, pasture, herd, date range) previously relied on `placeholder` text or a `title` attribute; these are replaced with proper labels.
+- The chat input carries `aria-label="Ask about your ranch history"`.
+
+---
+
 ## Code Quality
 
 ### TypeScript Strict Mode

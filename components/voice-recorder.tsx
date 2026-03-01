@@ -52,6 +52,8 @@ export function VoiceRecorder({ onTranscript }: VoiceRecorderProps) {
       <button
         type="button"
         onClick={isListening ? stopListening : startListening}
+        aria-label={isListening ? "Stop recording" : "Start voice recording"}
+        aria-pressed={isListening}
         className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
           isListening
             ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -67,7 +69,9 @@ export function VoiceRecorder({ onTranscript }: VoiceRecorderProps) {
             Stop recording
           </>
         ) : (
-          <>🎙 Record note</>
+          <>
+            <span aria-hidden="true">🎙</span> Record note
+          </>
         )}
       </button>
       {transcript && !isListening && (

@@ -90,10 +90,28 @@ export default async function PasturesPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-muted">
               <tr>
-                <th className="px-4 py-3 font-medium text-foreground">Name</th>
-                <th className="px-4 py-3 font-medium text-foreground">Acres</th>
-                <th className="px-4 py-3 font-medium text-foreground">Notes</th>
-                <th className="px-4 py-3 font-medium text-foreground">
+                <th
+                  scope="col"
+                  className="px-4 py-3 font-medium text-foreground"
+                >
+                  Name
+                </th>
+                <th
+                  scope="col"
+                  className="px-4 py-3 font-medium text-foreground"
+                >
+                  Acres
+                </th>
+                <th
+                  scope="col"
+                  className="px-4 py-3 font-medium text-foreground"
+                >
+                  Notes
+                </th>
+                <th
+                  scope="col"
+                  className="px-4 py-3 font-medium text-foreground"
+                >
                   <span className="sr-only">Actions</span>
                 </th>
               </tr>

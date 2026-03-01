@@ -138,6 +138,7 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
                 key={tag}
                 type="button"
                 onClick={() => toggleTag(tag)}
+                aria-pressed={isSelected}
                 className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
                   isSelected
                     ? "border-primary bg-primary text-primary-foreground"
