@@ -67,3 +67,30 @@ export function makeMockSupabase(
     from: mockFrom,
   };
 }
+
+/**
+ * Returns vi.mock factory args for @/lib/supabase/queries.
+ * Use in test files that import from layout or pages that call getUser/getProfile.
+ *
+ * Usage in a test file:
+ *   vi.mock("@/lib/supabase/queries", makeQueriesMock());
+ */
+export function makeQueriesMock(
+  userOverride?: object | null,
+  profileOverride?: { full_name?: string; ranch_name?: string } | null,
+) {
+  const user =
+    userOverride !== undefined
+      ? userOverride
+      : { id: "user-test-id", email: "test@example.com" };
+
+  const profile =
+    profileOverride !== undefined
+      ? profileOverride
+      : { full_name: "Test User", ranch_name: "Test Ranch" };
+
+  return () => ({
+    getUser: vi.fn().mockResolvedValue(user),
+    getProfile: vi.fn().mockResolvedValue(profile),
+  });
+}

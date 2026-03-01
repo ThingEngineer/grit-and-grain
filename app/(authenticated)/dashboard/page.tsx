@@ -1,24 +1,21 @@
 import { createClient } from "@/lib/supabase/server";
+import { getUser, getProfile } from "@/lib/supabase/queries";
 import { DiaryEntryCard } from "@/components/diary-entry-card";
 import { EmptyState } from "@/components/empty-state";
 import { SeedButton } from "@/components/seed-button";
 import Link from "next/link";
 
 export default async function DashboardPage() {
+  const user = await getUser();
+  const profile = await getProfile(user!.id);
   const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // Fetch all dashboard data in parallel — avoids sequential Supabase round-trips
+  // Fetch dashboard data in parallel — profile already resolved from cache
   const [
-    { data: profile },
     { count: entryCount },
     { count: pastureCount },
     { data: entries },
   ] = await Promise.all([
-    supabase.from("profiles").select("ranch_name").eq("id", user!.id).single(),
     supabase
       .from("diary_entries")
       .select("*", { count: "exact", head: true })

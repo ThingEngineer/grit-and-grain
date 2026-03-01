@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/queries";
 import { DiaryEntryCard } from "@/components/diary-entry-card";
 import { DiaryFilters } from "@/components/diary-filters";
 import { EmptyState } from "@/components/empty-state";
@@ -19,10 +20,8 @@ export default async function DiaryListPage({
 }: {
   searchParams: SearchParams;
 }) {
+  const user = await getUser();
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   const { q, pasture, herd, tag, from, to } = await searchParams;
 

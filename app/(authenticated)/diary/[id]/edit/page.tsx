@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/queries";
 import { DiaryEntryEditForm } from "./diary-entry-edit-form";
 import { notFound } from "next/navigation";
 
@@ -8,10 +9,8 @@ export default async function EditDiaryEntryPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const user = await getUser();
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   // Fetch entry, pastures, and herd groups in parallel
   const [entryResult, pasturesResult, herdsResult] = await Promise.all([

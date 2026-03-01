@@ -1,5 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { getUser, getProfile } from "@/lib/supabase/queries";
 import { ProfileForm } from "@/components/profile-form";
 
 type ProfilePageProps = Readonly<{
@@ -11,20 +11,13 @@ type ProfilePageProps = Readonly<{
 }>;
 
 export default async function ProfilePage({ searchParams }: ProfilePageProps) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   if (!user) {
     return redirect("/login");
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name, ranch_name")
-    .eq("id", user.id)
-    .single();
+  const profile = await getProfile(user.id);
 
   const params = await searchParams;
   const isOnboarding = params.onboarding === "true";

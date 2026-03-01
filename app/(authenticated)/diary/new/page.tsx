@@ -1,11 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/queries";
 import { DiaryEntryForm } from "./diary-entry-form";
 
 export default async function NewDiaryEntryPage() {
+  const user = await getUser();
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   // Fetch pastures and herd groups for dropdowns
   const [{ data: pastures }, { data: herdGroups }] = await Promise.all([

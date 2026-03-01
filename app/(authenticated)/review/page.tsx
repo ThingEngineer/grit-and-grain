@@ -1,12 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/queries";
 import { ReviewClient } from "./review-client";
 
 export default async function ReviewPage() {
+  const user = await getUser();
   const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   const { data: previousReviews } = await supabase
     .from("weekly_reviews")
