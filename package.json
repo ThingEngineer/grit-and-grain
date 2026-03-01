@@ -12,7 +12,6 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.50",
     "@ai-sdk/openai": "^3.0.37",
     "@ai-sdk/react": "^3.0.107",
     "@supabase/ssr": "^0.8.0",
