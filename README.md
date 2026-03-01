@@ -30,6 +30,19 @@ Existing farm-management apps demand structured data entry—spreadsheets, forms
 
 ---
 
+## Try the Live Demo
+
+**Live URL:** https://gritandgrain.farm
+
+**Demo Account Credentials:**
+
+- **Email:** `demo@gritandgrain.farm`
+- **Password:** `DemoPassword123!`
+
+After logging in, you can populate your account with sample data by clicking the **"Seed Demo Data"** button on the Dashboard page. This will add twelve months of synthetic diary entries for a fictional ranch ("Dry Creek Ranch") covering rainfall observations, pasture rotation, hay cutting notes, and herd health logs.
+
+---
+
 ## Demo Flow (Seed Data)
 
 The demo environment is pre-loaded with twelve months of synthetic diary entries for a fictional ranch ("Dry Creek Ranch") covering:
