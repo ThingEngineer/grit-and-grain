@@ -70,7 +70,6 @@ const FARM_KEYWORDS = new Set([
   "straw",
   "silage",
   "forage",
-  "forage",
   "grass",
   "graze",
   "grazing",
