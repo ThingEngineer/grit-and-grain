@@ -5,7 +5,8 @@ import Markdown from "react-markdown";
 import { stripMarkdown } from "@/lib/utils/strip-markdown";
 import { ReadAloudButton } from "@/components/read-aloud-button";
 import { useOffline } from "@/components/offline-provider";
-import { WifiOff } from "lucide-react";
+import { WifiOff, Copy, Check, FileText } from "lucide-react";
+import { Alert } from "@/components/ui/alert";
 
 type WeeklyReview = {
   id: string;
@@ -24,6 +25,8 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedReview, setSelectedReview] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [expandedReview, setExpandedReview] = useState<string | null>(null);
   const { isOnline } = useOffline();
 
   const today = new Date().toISOString().split("T")[0];
@@ -77,6 +80,17 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
     setSelectedReview(review.id);
     setWeekStart(review.week_start);
     setWeekEnd(review.week_end);
+  }
+
+  function handleCopy(text: string) {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  function toggleExpanded(id: string) {
+    setExpandedReview((prev) => (prev === id ? null : id));
   }
 
   const displayMd = summaryMd;
@@ -136,12 +150,9 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
 
         {/* Error */}
         {error && (
-          <div
-            role="alert"
-            className="mb-4 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
-          >
+          <Alert variant="error" className="mb-4">
             {error}
-          </div>
+          </Alert>
         )}
 
         {/* Loading */}
@@ -159,11 +170,23 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
 
         {/* Review content */}
         {displayMd && !isLoading && (
-          <div className="rounded-lg border border-border bg-card p-6">
-            <div className="mb-3 flex justify-end">
+          <div className="rounded-lg border border-t-2 border-border border-t-accent bg-card p-6">
+            <div className="mb-3 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => handleCopy(displayMd)}
+                className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                {copied ? (
+                  <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                ) : (
+                  <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                )}
+                {copied ? "Copied" : "Copy"}
+              </button>
               <ReadAloudButton text={displayMd} />
             </div>
-            <div className="prose max-w-none dark:prose-invert">
+            <div className="prose prose-sm max-w-none dark:prose-invert">
               <Markdown>{displayMd}</Markdown>
             </div>
           </div>
@@ -172,7 +195,10 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
         {/* Empty state */}
         {!displayMd && !isLoading && !error && (
           <div className="rounded-lg border border-border bg-card p-8 text-center">
-            <div className="mb-2 text-4xl">📋</div>
+            <FileText
+              className="mx-auto mb-3 h-10 w-10 text-muted-foreground/50"
+              aria-hidden="true"
+            />
             <p className="text-sm text-muted-foreground">
               Select a date range and click &ldquo;Generate Review&rdquo; to get
               an AI summary of your ranch week.
@@ -197,22 +223,34 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
         ) : (
           <div className="space-y-2">
             {previousReviews.map((review) => (
-              <button
+              <div
                 key={review.id}
-                onClick={() => viewPreviousReview(review)}
-                className={`w-full rounded-lg border p-3 text-left text-sm transition-colors ${
-                  selectedReview === review.id
-                    ? "border-muted-foreground bg-muted"
-                    : "border-border bg-card hover:border-muted-foreground"
-                }`}
+                className="rounded-lg border border-border bg-card overflow-hidden"
               >
-                <div className="font-medium text-foreground">
-                  {review.week_start} — {review.week_end}
-                </div>
-                <div className="mt-1 truncate text-xs text-muted-foreground">
-                  {stripMarkdown(review.summary_md).slice(0, 80)}…
-                </div>
-              </button>
+                <button
+                  onClick={() => {
+                    viewPreviousReview(review);
+                    toggleExpanded(review.id);
+                  }}
+                  className={`w-full p-3 text-left text-sm transition-colors hover:bg-muted/50 ${
+                    selectedReview === review.id ? "bg-muted" : ""
+                  }`}
+                >
+                  <div className="font-medium text-foreground">
+                    {review.week_start} — {review.week_end}
+                  </div>
+                  <div className="mt-1 truncate text-xs text-muted-foreground">
+                    {stripMarkdown(review.summary_md).slice(0, 80)}…
+                  </div>
+                </button>
+                {expandedReview === review.id && (
+                  <div className="border-t border-border px-3 pb-3 pt-2">
+                    <div className="prose prose-xs max-w-none dark:prose-invert text-xs">
+                      <Markdown>{review.summary_md}</Markdown>
+                    </div>
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         )}

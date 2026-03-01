@@ -65,7 +65,7 @@ export default function SignUpPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="max-w-md font-serif text-3xl font-semibold leading-snug text-zinc-900"
+            className="max-w-md font-serif text-3xl font-semibold leading-snug text-white"
           >
             Speak your day. Build your legacy.
           </motion.p>
@@ -75,7 +75,7 @@ export default function SignUpPage() {
         <div className="absolute inset-0 flex items-center justify-center p-6 lg:hidden">
           <Link
             href="/"
-            className="font-serif text-3xl font-semibold text-zinc-900"
+            className="font-serif text-3xl font-semibold text-white"
           >
             Grit &amp; Grain
           </Link>

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getUser } from "@/lib/supabase/queries";
 import { ReviewClient } from "./review-client";
+import { PageHeader } from "@/components/page-header";
 
 export default async function ReviewPage() {
   const user = await getUser();
@@ -15,13 +16,10 @@ export default async function ReviewPage() {
 
   return (
     <div>
-      <h1 className="mb-4 font-serif text-2xl font-bold text-foreground">
-        Weekly Review
-      </h1>
-      <p className="mb-6 text-sm text-muted-foreground">
-        AI-generated summaries of your ranch week — key events, rainfall,
-        rotation, hay, and herd health.
-      </p>
+      <PageHeader
+        title="Weekly Review"
+        description="AI-generated summaries of your ranch week — key events, rainfall, rotation, hay, and herd health."
+      />
       <ReviewClient previousReviews={previousReviews ?? []} />
     </div>
   );

@@ -29,14 +29,17 @@ describe("DiaryEntryCard", () => {
     ).toBeInTheDocument();
   });
 
-  it("truncates content longer than 180 characters and appends ellipsis", () => {
+  it("renders full content (CSS line-clamp handles visual truncation, not JS)", () => {
     const longContent = "A".repeat(200);
     render(<DiaryEntryCard {...baseProps} content={longContent} />);
-    const text = screen.getByText(/A+\u2026/);
-    expect(text.textContent?.length).toBeLessThanOrEqual(184); // 180 + '...' (1 char ellipsis)
+    // Full content is rendered in the DOM; CSS line-clamp handles visual truncation
+    const el = screen.getByText(longContent);
+    expect(el).toBeInTheDocument();
+    // Content is NOT truncated via JS — no ellipsis appended
+    expect(el.textContent).not.toContain("…");
   });
 
-  it("does not truncate content that is exactly 180 characters", () => {
+  it("renders content without JS truncation for any length", () => {
     const exactContent = "B".repeat(180);
     render(<DiaryEntryCard {...baseProps} content={exactContent} />);
     const el = screen.getByText(exactContent);

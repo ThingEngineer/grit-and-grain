@@ -6,6 +6,9 @@ import {
   deleteHerdGroup,
 } from "@/app/(authenticated)/herds/actions";
 import { useOffline } from "@/components/offline-provider";
+import { Trash2 } from "lucide-react";
+import { EmptyState } from "@/components/empty-state";
+import { Users } from "lucide-react";
 
 type HerdGroup = {
   id: string;
@@ -194,7 +197,10 @@ export function HerdForm({ herdGroups }: HerdFormProps) {
             </thead>
             <tbody className="divide-y divide-border bg-card">
               {herdGroups.map((group) => (
-                <tr key={group.id}>
+                <tr
+                  key={group.id}
+                  className="hover:bg-muted/40 transition-colors"
+                >
                   <td className="px-4 py-3 font-medium text-foreground">
                     {group.name}
                   </td>
@@ -212,9 +218,11 @@ export function HerdForm({ herdGroups }: HerdFormProps) {
                       type="button"
                       onClick={() => handleDelete(group.id)}
                       disabled={isPending}
-                      className="text-xs text-destructive hover:text-destructive/80 disabled:opacity-50"
+                      title="Delete"
+                      className="inline-flex items-center justify-center rounded-md p-1.5 text-destructive/70 transition-colors hover:bg-destructive/10 hover:text-destructive disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     >
-                      Delete
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      <span className="sr-only">Delete {group.name}</span>
                     </button>
                   </td>
                 </tr>
@@ -223,11 +231,10 @@ export function HerdForm({ herdGroups }: HerdFormProps) {
           </table>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-border py-12">
-          <p className="text-sm text-muted-foreground">
-            No herd groups yet. Add one above to get started.
-          </p>
-        </div>
+        <EmptyState
+          icon={Users}
+          message="No herd groups yet. Add one above to get started."
+        />
       )}
     </>
   );

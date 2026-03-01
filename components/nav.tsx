@@ -5,6 +5,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ProfileMenu } from "@/components/profile-menu";
+import { AnimatePresence, motion } from "framer-motion";
 
 type NavProps = Readonly<{
   userName: string;
@@ -46,7 +47,11 @@ export function Nav({ userName }: NavProps) {
                 key={href}
                 href={href}
                 aria-current={pathname === href ? "page" : undefined}
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className={`text-sm font-medium transition-colors hover:text-foreground ${
+                  pathname === href
+                    ? "text-foreground underline underline-offset-4 decoration-primary"
+                    : "text-muted-foreground"
+                }`}
               >
                 {label}
               </Link>
@@ -112,57 +117,67 @@ export function Nav({ userName }: NavProps) {
       </div>
 
       {/* Mobile dropdown menu */}
-      {menuOpen && (
-        <div
-          id="mobile-menu"
-          className="border-t border-border bg-background md:hidden"
-        >
-          <div className="mx-auto max-w-5xl px-4 pb-4">
-            <div className="flex flex-col">
-              {navLinks.map(({ href, label }) => (
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            id="mobile-menu"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.15 }}
+            className="border-t border-border bg-background md:hidden"
+          >
+            <div className="mx-auto max-w-5xl px-4 pb-4">
+              <div className="flex flex-col">
+                {navLinks.map(({ href, label }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setMenuOpen(false)}
+                    aria-current={pathname === href ? "page" : undefined}
+                    className={`py-3 text-sm font-medium transition-colors hover:text-foreground ${
+                      pathname === href
+                        ? "text-foreground font-semibold"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    {label}
+                  </Link>
+                ))}
+              </div>
+              <div className="mt-3 flex flex-col border-t border-border pt-3">
                 <Link
-                  key={href}
-                  href={href}
+                  href="/profile"
                   onClick={() => setMenuOpen(false)}
-                  aria-current={pathname === href ? "page" : undefined}
                   className="py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  {label}
+                  Profile
                 </Link>
-              ))}
-            </div>
-            <div className="mt-3 flex flex-col border-t border-border pt-3">
-              <Link
-                href="/profile"
-                onClick={() => setMenuOpen(false)}
-                className="py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-              >
-                Profile
-              </Link>
-              <Link
-                href="/account"
-                onClick={() => setMenuOpen(false)}
-                className="py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-              >
-                Account
-              </Link>
-              <div className="mt-1 flex items-center justify-between border-t border-border pt-3">
-                <span className="text-sm text-muted-foreground">
-                  {userName}
-                </span>
-                <form action="/api/auth/sign-out" method="POST">
-                  <button
-                    type="submit"
-                    className="rounded-md bg-muted px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/70"
-                  >
-                    Sign out
-                  </button>
-                </form>
+                <Link
+                  href="/account"
+                  onClick={() => setMenuOpen(false)}
+                  className="py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  Account
+                </Link>
+                <div className="mt-1 flex items-center justify-between border-t border-border pt-3">
+                  <span className="text-sm text-muted-foreground">
+                    {userName}
+                  </span>
+                  <form action="/api/auth/sign-out" method="POST">
+                    <button
+                      type="submit"
+                      className="rounded-md bg-muted px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/70"
+                    >
+                      Sign out
+                    </button>
+                  </form>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }

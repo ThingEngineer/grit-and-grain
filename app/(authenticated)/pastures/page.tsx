@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getUser } from "@/lib/supabase/queries";
 import { PastureForm } from "@/components/pasture-form";
+import { PageHeader } from "@/components/page-header";
 
 export default async function PasturesPage() {
   const user = await getUser();
@@ -14,9 +15,7 @@ export default async function PasturesPage() {
 
   return (
     <div>
-      <h1 className="mb-6 font-serif text-2xl font-bold text-foreground">
-        Pastures
-      </h1>
+      <PageHeader title="Pastures" />
       <PastureForm pastures={pastures ?? []} />
     </div>
   );

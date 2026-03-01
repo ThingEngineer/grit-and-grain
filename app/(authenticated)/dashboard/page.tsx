@@ -5,6 +5,8 @@ import { DiaryEntryCard } from "@/components/diary-entry-card";
 import { EmptyState } from "@/components/empty-state";
 import { SeedButton } from "@/components/seed-button";
 import Link from "next/link";
+import { BookOpen, MapPin, Users, Calendar } from "lucide-react";
+import { PageHeader } from "@/components/page-header";
 
 /**
  * Per-user cached dashboard queries — revalidated on-demand via the
@@ -20,11 +22,16 @@ const getDashboardData = unstable_cache(
     const supabase = createAdminClient();
     const [
       { count: pastureCount },
+      { count: herdCount },
       // count: "exact" on a .limit() call returns the total un-paged count
       { data: entries, count: entryCount },
     ] = await Promise.all([
       supabase
         .from("pastures")
+        .select("*", { count: "exact", head: true })
+        .eq("profile_id", userId),
+      supabase
+        .from("herd_groups")
         .select("*", { count: "exact", head: true })
         .eq("profile_id", userId),
       supabase
@@ -34,7 +41,7 @@ const getDashboardData = unstable_cache(
         .order("entry_date", { ascending: false })
         .limit(5),
     ]);
-    return { pastureCount, entryCount, entries };
+    return { pastureCount, herdCount, entryCount, entries };
   },
   ["dashboard-data"],
   { revalidate: 60, tags: ["dashboard"] },
@@ -45,48 +52,70 @@ export default async function DashboardPage() {
   const profile = await getProfile(user!.id);
 
   // Auth is live — data comes from the per-user cache
-  const { pastureCount, entryCount, entries } = await getDashboardData(
+  const { pastureCount, herdCount, entryCount, entries } = await getDashboardData(
     user!.id,
   );
 
   const hasEntries = (entryCount ?? 0) > 0;
+  const lastEntryDate = entries?.[0]?.entry_date ?? null;
 
   return (
     <div>
       {/* Dashboard header */}
-      <div className="mb-8">
-        <h1 className="font-serif text-2xl font-bold text-foreground">
-          {profile?.ranch_name || "Dashboard"}
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Your ranch at a glance.
-        </p>
-      </div>
+      <PageHeader
+        title={profile?.ranch_name || "Dashboard"}
+        description="Your ranch at a glance."
+        action={
+          <Link
+            href="/diary/new"
+            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            + New entry
+          </Link>
+        }
+      />
 
       {/* Quick stats */}
       <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <div className="rounded-lg border border-border bg-card p-4">
-          <p className="font-serif text-2xl font-bold text-foreground">
-            {entryCount ?? 0}
-          </p>
-          <p className="text-sm text-muted-foreground">Diary entries</p>
+        <div className="rounded-lg border border-border bg-card p-4 hover:shadow-md transition-shadow">
+          <div className="mb-2 flex items-center gap-2 text-muted-foreground">
+            <BookOpen className="h-4 w-4" aria-hidden="true" />
+            <span className="text-xs font-medium uppercase tracking-wide">Diary entries</span>
+          </div>
+          <p className="font-serif text-3xl font-bold text-primary">{entryCount ?? 0}</p>
         </div>
-        <div className="rounded-lg border border-border bg-card p-4">
-          <p className="font-serif text-2xl font-bold text-foreground">
-            {pastureCount ?? 0}
+        <div className="rounded-lg border border-border bg-card p-4 hover:shadow-md transition-shadow">
+          <div className="mb-2 flex items-center gap-2 text-muted-foreground">
+            <MapPin className="h-4 w-4" aria-hidden="true" />
+            <span className="text-xs font-medium uppercase tracking-wide">Pastures</span>
+          </div>
+          <p className="font-serif text-3xl font-bold text-primary">{pastureCount ?? 0}</p>
+        </div>
+        <div className="rounded-lg border border-border bg-card p-4 hover:shadow-md transition-shadow">
+          <div className="mb-2 flex items-center gap-2 text-muted-foreground">
+            <Users className="h-4 w-4" aria-hidden="true" />
+            <span className="text-xs font-medium uppercase tracking-wide">Herd groups</span>
+          </div>
+          <p className="font-serif text-3xl font-bold text-primary">{herdCount ?? 0}</p>
+        </div>
+        <div className="rounded-lg border border-border bg-card p-4 hover:shadow-md transition-shadow">
+          <div className="mb-2 flex items-center gap-2 text-muted-foreground">
+            <Calendar className="h-4 w-4" aria-hidden="true" />
+            <span className="text-xs font-medium uppercase tracking-wide">Last entry</span>
+          </div>
+          <p className="font-serif text-lg font-bold text-primary">
+            {lastEntryDate
+              ? new Date(lastEntryDate + "T00:00:00").toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                })
+              : "—"}
           </p>
-          <p className="text-sm text-muted-foreground">Pastures</p>
         </div>
       </div>
 
       {/* Quick-add button */}
       <div className="mb-6 flex items-center gap-3">
-        <Link
-          href="/diary/new"
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-        >
-          + New diary entry
-        </Link>
         <SeedButton hasEntries={hasEntries} />
       </div>
 
@@ -121,6 +150,7 @@ export default async function DashboardPage() {
           </div>
         ) : (
           <EmptyState
+            icon={BookOpen}
             message="No diary entries yet. Start recording your ranch observations."
             actionLabel="Create your first entry"
             actionHref="/diary/new"

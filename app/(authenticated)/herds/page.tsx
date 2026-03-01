@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getUser } from "@/lib/supabase/queries";
 import { HerdForm } from "@/components/herd-form";
+import { PageHeader } from "@/components/page-header";
 
 export default async function HerdsPage() {
   const user = await getUser();
@@ -14,9 +15,7 @@ export default async function HerdsPage() {
 
   return (
     <div>
-      <h1 className="mb-6 font-serif text-2xl font-bold text-foreground">
-        Herd groups
-      </h1>
+      <PageHeader title="Herd groups" />
       <HerdForm herdGroups={herdGroups ?? []} />
     </div>
   );

@@ -5,6 +5,8 @@ import { DiaryFilters } from "@/components/diary-filters";
 import { EmptyState } from "@/components/empty-state";
 import Link from "next/link";
 import { Suspense } from "react";
+import { PageHeader } from "@/components/page-header";
+import { BookOpen } from "lucide-react";
 
 type SearchParams = Promise<{
   q?: string;
@@ -86,17 +88,17 @@ export default async function DiaryListPage({
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-serif text-2xl font-bold text-foreground">
-          Diary entries
-        </h1>
-        <Link
-          href="/diary/new"
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-        >
-          + New entry
-        </Link>
-      </div>
+      <PageHeader
+        title="Diary entries"
+        action={
+          <Link
+            href="/diary/new"
+            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            + New entry
+          </Link>
+        }
+      />
 
       <div className="mb-6">
         <Suspense>
@@ -130,6 +132,7 @@ export default async function DiaryListPage({
         </div>
       ) : (
         <EmptyState
+          icon={BookOpen}
           message={
             hasFilters
               ? "No entries match your filters."

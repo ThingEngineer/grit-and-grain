@@ -1,18 +1,27 @@
 import Link from "next/link";
+import type { LucideIcon } from "lucide-react";
 
 type EmptyStateProps = Readonly<{
+  icon?: LucideIcon;
   message: string;
   actionLabel?: string;
   actionHref?: string;
 }>;
 
 export function EmptyState({
+  icon: Icon,
   message,
   actionLabel,
   actionHref,
 }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-border py-12">
+      {Icon && (
+        <Icon
+          className="mb-4 h-10 w-10 text-muted-foreground/50"
+          aria-hidden="true"
+        />
+      )}
       <p
         className={`text-sm text-muted-foreground ${actionLabel ? "mb-4" : ""}`}
       >

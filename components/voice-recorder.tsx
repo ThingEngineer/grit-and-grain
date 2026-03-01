@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { Mic, Square } from "lucide-react";
 
 type VoiceRecorderProps = Readonly<{
   onTranscript: (text: string) => void;
@@ -58,7 +59,7 @@ export function VoiceRecorder({
         onClick={isListening ? stopListening : startListening}
         aria-label={isListening ? "Stop recording" : "Start voice recording"}
         aria-pressed={isListening}
-        className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+        className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
           isListening
             ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
             : "bg-primary text-primary-foreground hover:bg-primary/90"
@@ -67,14 +68,16 @@ export function VoiceRecorder({
         {isListening ? (
           <>
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive-foreground opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-destructive-foreground" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/70" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
             </span>
+            <Square className="h-4 w-4" aria-hidden="true" />
             Stop recording
           </>
         ) : (
           <>
-            <span aria-hidden="true">🎙</span> {label}
+            <Mic className="h-4 w-4" aria-hidden="true" />
+            {label}
           </>
         )}
       </button>

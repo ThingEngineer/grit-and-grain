@@ -56,13 +56,16 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="max-w-2xl space-y-6">
+      <p className="mb-4 text-xs text-muted-foreground">
+        Fields marked * are required.
+      </p>
       {/* Date */}
       <div>
         <label
           htmlFor="entry_date"
           className="mb-1 block text-sm font-medium text-foreground"
         >
-          Date
+          Date *
         </label>
         <input
           type="date"
@@ -72,6 +75,9 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
           required
           className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
         />
+        <p className="mt-1 text-xs text-muted-foreground">
+          Defaults to today. Adjust if recording a past observation.
+        </p>
       </div>
 
       {/* Pasture */}
@@ -124,7 +130,7 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
           htmlFor="content"
           className="mb-1 block text-sm font-medium text-foreground"
         >
-          Observation
+          Observation *
         </label>
         <div className="mb-2">
           <VoiceRecorder
@@ -143,6 +149,10 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
           onChange={(e) => setContent(e.target.value)}
           className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
         />
+        <p className="mt-1 text-xs text-muted-foreground">
+          Speak freely — AI will extract dates, weather, and events
+          automatically.
+        </p>
       </div>
 
       {/* Tags */}

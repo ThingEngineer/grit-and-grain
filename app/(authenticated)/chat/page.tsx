@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useMemo, useRef, useEffect, useState } from "react";
 import { DefaultChatTransport } from "ai";
 import { useChat } from "@ai-sdk/react";
 import Markdown from "react-markdown";
@@ -8,7 +8,9 @@ import { checkTopicRelevance } from "@/lib/ai/topic-guard";
 import { ReadAloudButton } from "@/components/read-aloud-button";
 import { VoiceRecorder } from "@/components/voice-recorder";
 import { useOffline } from "@/components/offline-provider";
-import { WifiOff } from "lucide-react";
+import { WifiOff, Wheat, ChevronDown } from "lucide-react";
+import { Alert } from "@/components/ui/alert";
+import { PageHeader } from "@/components/page-header";
 
 export default function ChatPage() {
   const { messages, sendMessage, status, error } = useChat({
@@ -18,8 +20,25 @@ export default function ChatPage() {
   });
   const [input, setInput] = useState("");
   const [topicWarning, setTopicWarning] = useState<string | undefined>();
+  const [showScrollBtn, setShowScrollBtn] = useState(false);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const isLoading = status === "submitted" || status === "streaming";
   const { isOnline } = useOffline();
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  function handleScroll() {
+    const el = messagesContainerRef.current;
+    if (!el) return;
+    setShowScrollBtn(el.scrollTop < el.scrollHeight - el.clientHeight - 100);
+  }
+
+  function scrollToBottom() {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }
 
   function handleInputChange(value: string) {
     setInput(value);
@@ -88,101 +107,117 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-[calc(100vh-8rem)] flex-col">
-      <h1 className="mb-4 font-serif text-2xl font-bold text-foreground">
-        Farm Memory
-      </h1>
-      <p className="mb-4 text-sm text-muted-foreground">
-        Ask questions about your ranch history — powered by your diary entries.
-      </p>
+      <PageHeader
+        title="Farm Memory"
+        description="Ask questions about your ranch history — powered by your diary entries."
+      />
 
       {/* Messages */}
-      <div
-        role="log"
-        aria-label="Conversation"
-        aria-live="polite"
-        className="flex-1 space-y-4 overflow-y-auto rounded-lg border border-border bg-card p-4"
-      >
-        {renderedMessages.length === 0 && (
-          <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
-            <div className="text-4xl">🌾</div>
-            <p className="text-sm text-muted-foreground">
-              Ask anything about your ranch diary…
-            </p>
-            <div className="flex flex-wrap justify-center gap-2">
-              {suggestions.map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => {
-                    setInput(s);
-                  }}
-                  className="rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-ring hover:text-foreground"
-                >
-                  {s}
-                </button>
-              ))}
+      <div className="relative flex-1 overflow-hidden">
+        <div
+          ref={messagesContainerRef}
+          onScroll={handleScroll}
+          role="log"
+          aria-label="Conversation"
+          aria-live="polite"
+          className="h-full space-y-4 overflow-y-auto rounded-lg border border-border bg-card p-4"
+        >
+          {renderedMessages.length === 0 && (
+            <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
+              <Wheat
+                className="h-10 w-10 text-muted-foreground/50"
+                aria-hidden="true"
+              />
+              <p className="text-sm text-muted-foreground">
+                Ask anything about your ranch diary…
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {suggestions.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => {
+                      setInput(s);
+                    }}
+                    className="rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-ring hover:text-foreground"
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {renderedMessages.map((m) => (
-          <div
-            key={m.id}
-            className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
-          >
+          {renderedMessages.map((m) => (
             <div
-              className={`max-w-[80%] rounded-lg px-4 py-2 text-sm ${
-                m.role === "user"
-                  ? "bg-foreground text-background"
-                  : "bg-muted text-foreground"
-              }`}
+              key={m.id}
+              className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
             >
-              {m.role === "user" ? (
-                <div className="whitespace-pre-wrap">{m.text}</div>
-              ) : (
-                <>
-                  <div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-li:my-0">
-                    <Markdown>{m.text}</Markdown>
-                  </div>
-                  <div className="mt-1.5 flex justify-end">
-                    <ReadAloudButton text={m.text} />
-                  </div>
-                </>
-              )}
+              <div
+                className={`max-w-[80%] rounded-lg px-4 py-2 text-sm ${
+                  m.role === "user"
+                    ? "bg-primary text-primary-foreground rounded-br-sm"
+                    : "bg-card border border-border rounded-bl-sm"
+                }`}
+              >
+                {m.role === "user" ? (
+                  <div className="whitespace-pre-wrap">{m.text}</div>
+                ) : (
+                  <>
+                    <div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-li:my-0">
+                      <Markdown>{m.text}</Markdown>
+                    </div>
+                    <div className="mt-1.5 flex justify-end">
+                      <ReadAloudButton text={m.text} />
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
 
-        {isLoading && (
-          <div className="flex justify-start">
-            <div
-              role="status"
-              aria-live="polite"
-              className="max-w-[80%] rounded-lg bg-muted px-4 py-2 text-sm text-muted-foreground"
-            >
-              <span className="animate-pulse">Thinking…</span>
+          {isLoading && (
+            <div className="flex justify-start">
+              <div
+                role="status"
+                aria-live="polite"
+                className="rounded-bl-sm rounded-lg border border-border bg-card px-4 py-3"
+              >
+                <div className="flex items-center gap-1">
+                  {[0, 1, 2].map((i) => (
+                    <span
+                      key={i}
+                      className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce"
+                      style={{ animationDelay: `${i * 150}ms` }}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {error && (
-          <div
-            role="alert"
-            className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
+          {error && <Alert variant="error">{errorMessage}</Alert>}
+          <div ref={messagesEndRef} />
+        </div>
+        {showScrollBtn && (
+          <button
+            type="button"
+            onClick={scrollToBottom}
+            aria-label="Scroll to bottom"
+            className="absolute bottom-4 right-4 flex h-8 w-8 items-center justify-center rounded-full border border-border bg-card shadow-md transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
-            {errorMessage}
-          </div>
+            <ChevronDown
+              className="h-4 w-4 text-muted-foreground"
+              aria-hidden="true"
+            />
+          </button>
         )}
       </div>
 
       {/* Input */}
       {isOnline ? (
         <form onSubmit={onSubmit} className="mt-4 flex flex-col gap-2">
-          {topicWarning && (
-            <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
-              {topicWarning}
-            </p>
-          )}
+          {topicWarning && <Alert variant="warning">{topicWarning}</Alert>}
           <div className="mb-2">
             <VoiceRecorder
               label="Ask by voice"

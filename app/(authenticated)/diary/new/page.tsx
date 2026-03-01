@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getUser } from "@/lib/supabase/queries";
 import { DiaryEntryForm } from "./diary-entry-form";
+import { PageHeader } from "@/components/page-header";
 
 export default async function NewDiaryEntryPage() {
   const user = await getUser();
@@ -22,9 +23,11 @@ export default async function NewDiaryEntryPage() {
 
   return (
     <div>
-      <h1 className="mb-6 font-serif text-2xl font-bold text-foreground">
-        New diary entry
-      </h1>
+      <PageHeader
+        title="New diary entry"
+        backHref="/diary"
+        backLabel="All entries"
+      />
       <DiaryEntryForm pastures={pastures ?? []} herdGroups={herdGroups ?? []} />
     </div>
   );

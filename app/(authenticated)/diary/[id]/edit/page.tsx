@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getUser } from "@/lib/supabase/queries";
 import { DiaryEntryEditForm } from "./diary-entry-edit-form";
 import { notFound } from "next/navigation";
+import { PageHeader } from "@/components/page-header";
 
 export default async function EditDiaryEntryPage({
   params,
@@ -40,9 +41,11 @@ export default async function EditDiaryEntryPage({
 
   return (
     <div>
-      <h1 className="mb-6 font-serif text-2xl font-bold text-foreground">
-        Edit diary entry
-      </h1>
+      <PageHeader
+        title="Edit diary entry"
+        backHref="/diary"
+        backLabel="All entries"
+      />
       <DiaryEntryEditForm
         entryId={entry.id}
         initialDate={entry.entry_date}

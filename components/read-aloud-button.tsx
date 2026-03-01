@@ -58,7 +58,7 @@ export function ReadAloudButton({ text }: ReadAloudButtonProps) {
       type="button"
       onClick={toggle}
       aria-label={isSpeaking ? "Stop reading" : "Read aloud"}
-      className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
+      className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
         isSpeaking
           ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
           : "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground"

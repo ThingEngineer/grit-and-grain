@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { getUser, getProfile } from "@/lib/supabase/queries";
 import { ProfileForm } from "@/components/profile-form";
+import { Alert } from "@/components/ui/alert";
+import { PageHeader } from "@/components/page-header";
 
 type ProfilePageProps = Readonly<{
   searchParams: Promise<{
@@ -26,35 +28,24 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
     <div className="mx-auto max-w-lg">
       {isOnboarding ? (
         <>
-          <h1 className="mb-2 font-serif text-2xl font-bold text-foreground">
-            Welcome to Grit &amp; Grain
-          </h1>
-          <p className="mb-6 text-sm text-muted-foreground">
-            Let&apos;s get your ranch set up. Tell us a bit about yourself so we
-            can personalize your experience.
-          </p>
+          <PageHeader
+            title="Welcome to Grit &amp; Grain"
+            description="Let's get your ranch set up. Tell us a bit about yourself so we can personalize your experience."
+          />
         </>
       ) : (
-        <h1 className="mb-6 font-serif text-2xl font-bold text-foreground">
-          Profile
-        </h1>
+        <PageHeader title="Profile" />
       )}
 
       {params.success && (
-        <div
-          role="alert"
-          className="mb-4 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 dark:border-green-800 dark:bg-green-950 dark:text-green-200"
-        >
+        <Alert variant="success" className="mb-4">
           {params.success}
-        </div>
+        </Alert>
       )}
       {params.error && (
-        <div
-          role="alert"
-          className="mb-4 rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
-        >
+        <Alert variant="error" className="mb-4">
           {params.error}
-        </div>
+        </Alert>
       )}
 
       <ProfileForm profile={profile} isOnboarding={isOnboarding} />

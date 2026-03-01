@@ -2,6 +2,8 @@ import { getUser } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import { updateEmail, updatePassword } from "./actions";
 import { DeleteAccountSection } from "./delete-account-section";
+import { Alert } from "@/components/ui/alert";
+import { PageHeader } from "@/components/page-header";
 
 type AccountPageProps = Readonly<{
   searchParams: Promise<{ success?: string; error?: string }>;
@@ -18,25 +20,17 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
 
   return (
     <div className="mx-auto max-w-lg">
-      <h1 className="mb-6 font-serif text-2xl font-bold text-foreground">
-        Account
-      </h1>
+      <PageHeader title="Account" />
 
       {params.success && (
-        <div
-          role="alert"
-          className="mb-4 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 dark:border-green-800 dark:bg-green-950 dark:text-green-200"
-        >
+        <Alert variant="success" className="mb-4">
           {params.success}
-        </div>
+        </Alert>
       )}
       {params.error && (
-        <div
-          role="alert"
-          className="mb-4 rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
-        >
+        <Alert variant="error" className="mb-4">
           {params.error}
-        </div>
+        </Alert>
       )}
 
       {/* Email Section */}
