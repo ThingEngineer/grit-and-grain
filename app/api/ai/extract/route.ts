@@ -1,6 +1,7 @@
 import { generateObject } from "ai";
 import { chatModel } from "@/lib/ai/gateway";
 import { NLP_ENTITY_EXTRACTION_PROMPT } from "@/lib/ai/prompts";
+import { createClient } from "@/lib/supabase/server";
 import { z } from "zod/v4";
 
 const extractionSchema = z.object({
@@ -11,6 +12,16 @@ const extractionSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  // Authenticate user
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { transcript, pastures, herdGroups } = await request.json();
 
   if (!transcript) {
