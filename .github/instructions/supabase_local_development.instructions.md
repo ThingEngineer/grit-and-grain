@@ -34,7 +34,7 @@ applyTo: "**"
 - `supabase migration new <file_name>` - create new migration file
 - `supabase migration list` - list migrations
 - `PGPASSWORD=postgres psql -h 127.0.0.1 -p 54322 -U postgres -d postgres -f supabase/migrations/20251126100000_migration_file_name.sql` - manually apply specific migration file to local if migration up --local fails
-- supabase gen types typescript --local > lib/types/database.types.ts - generate/update types from local database
+- supabase gen types typescript --local > types/database.types.ts - generate/update types from local database
 
 ### Database Changes Workflow
 

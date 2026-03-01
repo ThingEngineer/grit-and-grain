@@ -10,7 +10,7 @@ type WeeklyReview = {
   week_start: string;
   week_end: string;
   summary_md: string;
-  created_at: string;
+  created_at: string | null;
 };
 
 type ReviewClientProps = Readonly<{

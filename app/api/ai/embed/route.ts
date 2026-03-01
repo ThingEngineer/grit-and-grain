@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     acres: entry.pastures?.acres,
     herd_group_name: entry.herd_groups?.name,
     head_count: entry.herd_groups?.head_count,
-    tags: entry.tags,
+    tags: entry.tags ?? undefined,
   });
 
   // Generate embedding
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
       entry_id: entryId,
       profile_id: entry.profile_id,
       content_for_rag: contentForRag,
-      embedding: embedding,
+      embedding: embedding as unknown as string,
     },
     { onConflict: "entry_id" },
   );

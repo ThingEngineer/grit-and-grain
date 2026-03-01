@@ -53,7 +53,7 @@ async function generateEmbedding(entry: {
   profile_id: string;
   entry_date: string;
   content: string;
-  tags: string[];
+  tags: string[] | null;
   pastures: { name: string; acres: number | null } | null;
   herd_groups: { name: string; head_count: number | null } | null;
 }) {
@@ -64,7 +64,7 @@ async function generateEmbedding(entry: {
     acres: entry.pastures?.acres,
     herd_group_name: entry.herd_groups?.name,
     head_count: entry.herd_groups?.head_count,
-    tags: entry.tags,
+    tags: entry.tags ?? undefined,
   });
 
   const { embedding } = await embed({
@@ -79,7 +79,7 @@ async function generateEmbedding(entry: {
       entry_id: entry.id,
       profile_id: entry.profile_id,
       content_for_rag: contentForRag,
-      embedding: embedding,
+      embedding: embedding as unknown as string,
     },
     { onConflict: "entry_id" },
   );

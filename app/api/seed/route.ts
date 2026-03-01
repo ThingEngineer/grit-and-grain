@@ -652,7 +652,7 @@ export async function POST() {
       entry_id: entry.id,
       profile_id: profileId,
       content_for_rag: ragTexts[i],
-      embedding: embeddings[i],
+      embedding: embeddings[i] as unknown as string,
     }));
 
     const { error: embedError } = await admin
