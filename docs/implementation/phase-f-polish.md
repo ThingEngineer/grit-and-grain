@@ -26,10 +26,10 @@ SUPABASE_SECRET_KEY=eyJ...
 
 # Vercel AI Gateway (unified access to Anthropic & OpenAI models)
 VERCEL_AI_GATEWAY_API_KEY=<your-api-key>
-VERCEL_AI_GATEWAY_BASE_URL=https://api.vercel.ai
+VERCEL_AI_GATEWAY_BASE_URL=https://ai-gateway.vercel.sh
 
 # AI Model choices (easily switched per environment)
-NEXT_PUBLIC_AI_CHAT_MODEL=anthropic/claude-4.6-sonnet
+NEXT_PUBLIC_AI_CHAT_MODEL=anthropic/claude-sonnet-4.6
 NEXT_PUBLIC_AI_EMBEDDING_MODEL=openai/text-embedding-3-small
 
 # App

@@ -74,7 +74,7 @@ pnpm lint               # ESLint (next/core-web-vitals + typescript)
 NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY  # Client-safe
 SUPABASE_SECRET_KEY              # Server-only (admin/service-role)
 VERCEL_AI_GATEWAY_API_KEY        # Unified access to Anthropic + OpenAI models
-VERCEL_AI_GATEWAY_BASE_URL       # https://api.vercel.ai
+VERCEL_AI_GATEWAY_BASE_URL       # https://ai-gateway.vercel.sh
 ```
 
 ## Code Style

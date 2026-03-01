@@ -32,15 +32,15 @@ Start from Phase B and work down. Each phase is designed so you can **stop after
 
 ## Key Decisions (locked in)
 
-| Decision          | Choice                                                          | Why                                                                |
-| ----------------- | --------------------------------------------------------------- | ------------------------------------------------------------------ |
-| Auth              | Required (email/password)                                       | Links demo user to seed data; clean RLS story                      |
-| AI routing        | Vercel AI Gateway via AI SDK                                    | Unified model access, observability, single billing                |
-| Text generation   | Anthropic Claude (via `@ai-sdk/anthropic`)                      | Strong instruction following, good at recommendations with caveats |
-| Embeddings        | OpenAI `text-embedding-3-small` 1536-dim (via `@ai-sdk/openai`) | Industry standard, strong retrieval quality                        |
-| Weekly Review     | On-demand (button click)                                        | Hackathon speed; mention cron as production plan                   |
-| Review date range | Rolling 7 days + optional custom range                          | Flexible, easy to implement                                        |
-| Package manager   | pnpm                                                            | Already configured                                                 |
+| Decision          | Choice                                                             | Why                                                                                                                             |
+| ----------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| Auth              | Required (email/password)                                          | Links demo user to seed data; clean RLS story                                                                                   |
+| AI routing        | Vercel AI Gateway via AI SDK                                       | Unified model access, observability, single billing                                                                             |
+| Text generation   | Anthropic Claude via OpenAI-compatible endpoint (`@ai-sdk/openai`) | Vercel AI Gateway's `/v1` endpoint supports all providers; `@ai-sdk/anthropic` sends `x-api-key` auth which the gateway rejects |
+| Embeddings        | OpenAI `text-embedding-3-small` 1536-dim (via `@ai-sdk/openai`)    | Industry standard, strong retrieval quality                                                                                     |
+| Weekly Review     | On-demand (button click)                                           | Hackathon speed; mention cron as production plan                                                                                |
+| Review date range | Rolling 7 days + optional custom range                             | Flexible, easy to implement                                                                                                     |
+| Package manager   | pnpm                                                               | Already configured                                                                                                              |
 
 ---
 

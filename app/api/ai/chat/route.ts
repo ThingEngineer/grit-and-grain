@@ -41,14 +41,20 @@ export async function POST(request: Request) {
   const topK = isTrendQuestion ? 12 : 8;
 
   // Retrieve relevant diary entries via vector search
-  const entries = await searchDiaryEntries(lastUserMessageText, topK);
+  let entries: { content_for_rag: string; similarity: number }[] = [];
+  try {
+    entries = await searchDiaryEntries(lastUserMessageText, topK);
+  } catch (err) {
+    console.error("[chat route] RAG search error:", err);
+    // Continue with empty context so chat still works without embeddings
+  }
 
   // Format context for the prompt
   const contextPassages =
     entries.length > 0
       ? entries
           .map(
-            (e: { content_for_rag: string; similarity: number }, i: number) =>
+            (e, i) =>
               `[Entry #${i + 1}]\n${e.content_for_rag}\n(Similarity: ${e.similarity.toFixed(2)})`,
           )
           .join("\n\n---\n\n")
@@ -74,5 +80,5 @@ export async function POST(request: Request) {
     messages: modelMessages,
   });
 
-  return result.toTextStreamResponse();
+  return result.toUIMessageStreamResponse();
 }

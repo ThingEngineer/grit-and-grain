@@ -151,7 +151,7 @@ cp .env.example .env.local
 #   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY – Supabase anon/public key
 #   SUPABASE_SECRET_KEY                       – Supabase service-role key (server-side only)
 #   VERCEL_AI_GATEWAY_API_KEY                 – Vercel AI Gateway API key (unified access)
-#   VERCEL_AI_GATEWAY_BASE_URL                – https://api.vercel.ai
+#   VERCEL_AI_GATEWAY_BASE_URL                – https://ai-gateway.vercel.sh
 #   NEXT_PUBLIC_AI_CHAT_MODEL                 – Chat model (e.g. anthropic/claude-3.5-sonnet)
 #   NEXT_PUBLIC_AI_EMBEDDING_MODEL            – Embedding model (e.g. openai/text-embedding-3-small)
 

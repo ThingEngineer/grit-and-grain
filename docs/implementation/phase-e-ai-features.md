@@ -23,14 +23,14 @@ This is the **highest-impact phase for the judges**. Implement:
 ### E.1 — Install AI SDK packages
 
 ```bash
-pnpm add ai @ai-sdk/openai @ai-sdk/anthropic
+pnpm add ai @ai-sdk/openai @ai-sdk/react
 ```
 
 Verify in `package.json` that these are added:
 
 - `ai` — Vercel AI SDK core
-- `@ai-sdk/openai` — OpenAI provider (embeddings)
-- `@ai-sdk/anthropic` — Anthropic provider (text generation)
+- `@ai-sdk/openai` — OpenAI-compatible provider (embeddings + all chat models via Vercel AI Gateway)
+- `@ai-sdk/react` — React hooks (`useChat`)
 
 ---
 
@@ -41,10 +41,10 @@ Add to `.env.local`:
 ```env
 # Vercel AI Gateway
 VERCEL_AI_GATEWAY_API_KEY=<your-gateway-api-key>
-VERCEL_AI_GATEWAY_BASE_URL=https://api.vercel.ai
+VERCEL_AI_GATEWAY_BASE_URL=https://ai-gateway.vercel.sh
 
 # AI Model choices (easily changed per environment)
-NEXT_PUBLIC_AI_CHAT_MODEL=anthropic/claude-4.6-sonnet
+NEXT_PUBLIC_AI_CHAT_MODEL=anthropic/claude-sonnet-4.6
 NEXT_PUBLIC_AI_EMBEDDING_MODEL=openai/text-embedding-3-small
 ```
 
@@ -52,7 +52,7 @@ Get your Vercel AI Gateway API key from [Vercel Dashboard → Settings → AI Ga
 
 **Model choices explained:**
 
-- **Chat model:** `anthropic/claude-4.6-sonnet` — latest Sonnet model, excellent for RAG and summaries
+- **Chat model:** `anthropic/claude-sonnet-4.6` — latest Sonnet model, excellent for RAG and summaries
 - **Embedding model:** `openai/text-embedding-3-small` — industry-standard embeddings, low cost
 
 To switch models (e.g., for production), just change the values without touching code.
@@ -71,31 +71,30 @@ For the full list of available models, see [Vercel AI Gateway Models](https://ve
 
 #### `lib/ai/gateway.ts` — Provider instances via Vercel AI Gateway
 
+> **Important:** Route everything through `createOpenAI` using the `/v1` OpenAI-compatible endpoint. This endpoint accepts `Authorization: Bearer` auth and supports all providers, including Anthropic models — do **not** use `createAnthropic` directly, as that SDK sends `x-api-key` which the Vercel AI Gateway rejects.
+
 ```typescript
 import { createOpenAI } from "@ai-sdk/openai";
-import { createAnthropic } from "@ai-sdk/anthropic";
 
 const apiKey = process.env.VERCEL_AI_GATEWAY_API_KEY;
 const baseURL =
-  process.env.VERCEL_AI_GATEWAY_BASE_URL || "https://api.vercel.ai";
+  process.env.VERCEL_AI_GATEWAY_BASE_URL || "https://ai-gateway.vercel.sh";
 
-// Route all models through Vercel AI Gateway
+// Route all models through Vercel AI Gateway using the OpenAI-compatible endpoint.
+// This endpoint accepts Authorization: Bearer auth and supports all providers
+// including Anthropic.
 export const openai = createOpenAI({
   apiKey,
-  baseURL,
+  baseURL: `${baseURL}/v1`,
 });
 
-export const anthropic = createAnthropic({
-  apiKey,
-  baseURL,
-});
-
-// Model references (read from environment variables for easy switching across environments)
+// Model references (read from environment variables for easy switching)
 export const embeddingModel = openai.embedding(
   process.env.NEXT_PUBLIC_AI_EMBEDDING_MODEL || "openai/text-embedding-3-small",
 );
-export const chatModel = anthropic(
-  process.env.NEXT_PUBLIC_AI_CHAT_MODEL || "anthropic/claude-4.6-sonnet",
+
+export const chatModel = openai(
+  process.env.NEXT_PUBLIC_AI_CHAT_MODEL || "anthropic/claude-sonnet-4.6",
 );
 ```
 
@@ -298,9 +297,11 @@ export async function POST(request: Request) {
     messages,
   });
 
-  return result.toDataStreamResponse();
+  return result.toUIMessageStreamResponse();
 }
 ```
+
+> **Note:** In AI SDK v6, `DefaultChatTransport` (used by `useChat`) requires `toUIMessageStreamResponse()`. The older `toDataStreamResponse()` method does not exist on `StreamTextResult` in v6.
 
 ---
 
