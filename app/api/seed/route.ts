@@ -115,6 +115,14 @@ function buildDiaryEntries(
       tags: ["rainfall", "rotation", "calving"],
     },
     {
+      entry_date: "2025-04-18",
+      pasture_id: null,
+      herd_group_id: cowCalf,
+      content:
+        "Spring vaccination day. Ran all 32 cows through the chute — gave BVD, IBR, and PI3 combination vaccine plus a 7-way clostridial booster. Treated every animal with a pour-on dewormer at the same time. Good body condition across the board, most cows sitting around a 5.5 out of 9. Always a relief to get that done before breeding season.",
+      tags: ["herd_health", "vaccination"],
+    },
+    {
       entry_date: "2025-04-28",
       pasture_id: west,
       herd_group_id: yearlings,
@@ -158,6 +166,14 @@ function buildDiaryEntries(
     },
 
     // ---- June 2025 ----
+    {
+      entry_date: "2025-06-02",
+      pasture_id: south,
+      herd_group_id: cowCalf,
+      content:
+        "Turned the bull out with the cow-calf pairs today on South Pasture. Running a 60-day breeding season — he'll come out around August 1st. He's in good body condition, 5 out of 9. Last year he settled 30 of 32 so expectations are high. Keeping an eye on him the first few days to make sure he's on the job.",
+      tags: ["herd_health", "breeding"],
+    },
     {
       entry_date: "2025-06-08",
       pasture_id: south,
@@ -227,12 +243,28 @@ function buildDiaryEntries(
       tags: ["herd_health", "pasture_check"],
     },
     {
+      entry_date: "2025-08-10",
+      pasture_id: null,
+      herd_group_id: null,
+      content:
+        "Did a water check across all four pastures. The stock pond on North Pasture is down about 18 inches from its June level. The creek-fed tank on West Bottom is still holding up well. Had to fill the 1,500-gallon portable tank and haul it out to South Pasture — the cattle are drinking that dry in about 4 days in this heat. Need to monitor closely. No rain in two weeks and none in the forecast.",
+      tags: ["pasture_check", "water"],
+    },
+    {
       entry_date: "2025-08-18",
       pasture_id: south,
       herd_group_id: null,
       content:
         "Checked South Pasture — it's been resting 28 days now. Starting to see some recovery. Still crispy on the hilltops but the lower areas are greening. Only 0.5 inches of rain so far this month.",
       tags: ["pasture_check", "rainfall"],
+    },
+    {
+      entry_date: "2025-08-25",
+      pasture_id: south,
+      herd_group_id: cowCalf,
+      content:
+        "Pulled the bull out of the cow herd today — he was in for 83 days. Should be plenty of coverage. Separated him back into a small dry lot. Cows seem unbothered. Based on the breeding dates, first calves should arrive around mid-February 2026. Will schedule the fall pregnancy check with the vet for mid-November.",
+      tags: ["herd_health", "breeding"],
     },
     {
       entry_date: "2025-08-30",
@@ -271,12 +303,28 @@ function buildDiaryEntries(
 
     // ---- October 2025 ----
     {
+      entry_date: "2025-10-01",
+      pasture_id: north,
+      herd_group_id: null,
+      content:
+        "Applied nitrogen fertilizer to North Pasture today — 50 lbs per acre of urea spread across all 40 acres. Cost $210 for the fertilizer. Rain is forecast for later this week which should help it soak in. The plan is to stockpile this fescue through October and November so we can strip-graze it in January or February when hay gets tight. Did not fertilize South or West Bottom this fall.",
+      tags: ["pasture_check", "fertilizer"],
+    },
+    {
       entry_date: "2025-10-08",
       pasture_id: south,
       herd_group_id: cowCalf,
       content:
         "Weaned the calves today. Stressful day but it went smooth. Calves are in the corral bawling. Cows are in South Pasture looking confused. Average weaning weight 480 lbs — really pleased with that.",
       tags: ["calving", "herd_health"],
+    },
+    {
+      entry_date: "2025-10-12",
+      pasture_id: null,
+      herd_group_id: cowCalf,
+      content:
+        "Pre-weaning vaccination day. Ran all 28 calves through the chute and gave each one a 7-way clostridial shot and a modified-live respiratory combo vaccine (BVD, IBR, BRSV, PI3). Also gave the 32 cows their annual fall booster. 60 animals total through the chute — took about 3 hours with the help of one hand. Calves handled it well. Much less stress doing it before weaning than trying to sort and vaccinate on the same day.",
+      tags: ["herd_health", "vaccination"],
     },
     {
       entry_date: "2025-10-16",
@@ -311,6 +359,14 @@ function buildDiaryEntries(
       content:
         "Cows are cleaning up the last of the South Pasture. Starting to supplement with hay — about 2 round bales per week. The weaned calves are settled down and eating well in the feedlot area.",
       tags: ["hay", "rotation"],
+    },
+    {
+      entry_date: "2025-11-18",
+      pasture_id: west,
+      herd_group_id: null,
+      content:
+        "Spent the afternoon repairing fence on the south end of West Bottom. Spring flooding had undermined a corner post and a 60-foot section of 4-strand barbed wire sagged into the creek. Reset the corner post with concrete, re-stretched the wire, and drove 8 new T-posts where the soil eroded. Also walked the full perimeter while I was down there — the rest of the fence is in decent shape. This section had been on the to-do list since April. Glad to have it done before hard freeze.",
+      tags: ["maintenance"],
     },
     {
       entry_date: "2025-11-28",
@@ -355,6 +411,14 @@ function buildDiaryEntries(
       content:
         "Heavy feeding period. Going through 6 round bales per week now. At this rate, our 100-bale supply will last until mid-March. That should be enough to get us to spring green-up.",
       tags: ["hay"],
+    },
+    {
+      entry_date: "2026-01-10",
+      pasture_id: null,
+      herd_group_id: null,
+      content:
+        "Ran a hay inventory today. Used 38 bales since we started feeding December 1st. That leaves us 62 bales. At 6 per week we have about 10 weeks — takes us to mid-March. Could be tight depending on how late spring comes. Asked the Johnson place about buying extra hay if needed — they quoted $45 per bale for 4x5 round bales of mixed grass. Also picked up 4 bags of loose cattle mineral at the co-op, $28 per bag, 50 lbs each. Mineral program is just straight calcium-phosphorus with trace minerals — nothing fancy.",
+      tags: ["hay", "supplement"],
     },
     {
       entry_date: "2026-01-14",
