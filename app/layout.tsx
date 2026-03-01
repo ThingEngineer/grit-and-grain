@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Newsreader, Space_Grotesk } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ProgressBar } from "@/components/progress-bar";
+import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
 import "./globals.css";
 
 const newsreader = Newsreader({
@@ -21,6 +22,7 @@ export const metadata: Metadata = {
   title: "Grit & Grain",
   description:
     "The AI-powered ranch assistant — stop relying on memory, start relying on history.",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -35,6 +37,7 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <ProgressBar />
+          <ServiceWorkerRegistration />
           {children}
         </ThemeProvider>
       </body>

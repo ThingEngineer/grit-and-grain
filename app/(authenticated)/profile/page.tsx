@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { updateProfile } from "./actions";
+import { ProfileForm } from "@/components/profile-form";
 
 type ProfilePageProps = Readonly<{
   searchParams: Promise<{
@@ -64,60 +64,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
         </div>
       )}
 
-      <form action={updateProfile} className="space-y-4">
-        {isOnboarding && <input type="hidden" name="onboarding" value="true" />}
-
-        <div>
-          <label
-            htmlFor="full_name"
-            className="mb-1 block text-sm font-medium text-foreground"
-          >
-            Name
-          </label>
-          <input
-            type="text"
-            id="full_name"
-            name="full_name"
-            defaultValue={profile?.full_name ?? ""}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
-            placeholder="Your name"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="ranch_name"
-            className="mb-1 block text-sm font-medium text-foreground"
-          >
-            Ranch Name
-          </label>
-          <input
-            type="text"
-            id="ranch_name"
-            name="ranch_name"
-            defaultValue={profile?.ranch_name ?? ""}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
-            placeholder="Your ranch name"
-          />
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
-            type="submit"
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            {isOnboarding ? "Save & Continue" : "Save changes"}
-          </button>
-          {isOnboarding && (
-            <a
-              href="/dashboard"
-              className="text-sm text-muted-foreground underline-offset-4 hover:underline"
-            >
-              Skip for now
-            </a>
-          )}
-        </div>
-      </form>
+      <ProfileForm profile={profile} isOnboarding={isOnboarding} />
     </div>
   );
 }

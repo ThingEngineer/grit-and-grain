@@ -4,6 +4,8 @@ import { useState } from "react";
 import Markdown from "react-markdown";
 import { stripMarkdown } from "@/lib/utils/strip-markdown";
 import { ReadAloudButton } from "@/components/read-aloud-button";
+import { useOffline } from "@/components/offline-provider";
+import { WifiOff } from "lucide-react";
 
 type WeeklyReview = {
   id: string;
@@ -22,6 +24,7 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedReview, setSelectedReview] = useState<string | null>(null);
+  const { isOnline } = useOffline();
 
   const today = new Date().toISOString().split("T")[0];
   const lastWeek = new Date(Date.now() - 7 * 86400000)
@@ -117,12 +120,18 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
           <button
             type="button"
             onClick={generateReview}
-            disabled={isLoading}
+            disabled={isLoading || !isOnline}
             aria-busy={isLoading}
             className="rounded-lg bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLoading ? "Generating…" : "Generate Review"}
           </button>
+          {!isOnline && (
+            <div className="flex items-center gap-1.5 text-sm text-amber-700 dark:text-amber-400">
+              <WifiOff className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>Reconnect for insights</span>
+            </div>
+          )}
         </div>
 
         {/* Error */}

@@ -1,8 +1,9 @@
 "use client";
 
 import { createEntry } from "../actions";
-import { useState } from "react";
+import { useState, useTransition, useRef } from "react";
 import { VoiceRecorder } from "@/components/voice-recorder";
+import { useOffline } from "@/components/offline-provider";
 
 const AVAILABLE_TAGS = [
   "rainfall",
@@ -25,6 +26,10 @@ type DiaryEntryFormProps = Readonly<{
 export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [content, setContent] = useState("");
+  const { isOnline, enqueue } = useOffline();
+  const [isPending, startTransition] = useTransition();
+  const [offlineSaved, setOfflineSaved] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -34,8 +39,35 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
     );
   }
 
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
+    if (isOnline) {
+      startTransition(async () => {
+        await createEntry(formData);
+      });
+    } else {
+      await enqueue({
+        type: "create_entry",
+        data: {
+          entry_date: formData.get("entry_date") as string,
+          content: formData.get("content") as string,
+          pasture_id: (formData.get("pasture_id") as string) || undefined,
+          herd_group_id: (formData.get("herd_group_id") as string) || undefined,
+          tags: selectedTags.length > 0 ? selectedTags : undefined,
+        },
+      });
+      setContent("");
+      setSelectedTags([]);
+      setOfflineSaved(true);
+      formRef.current?.reset();
+      setTimeout(() => setOfflineSaved(false), 4000);
+    }
+  }
+
   return (
-    <form action={createEntry} className="max-w-2xl space-y-6">
+    <form ref={formRef} onSubmit={handleSubmit} className="max-w-2xl space-y-6">
       {/* Date */}
       <div>
         <label
@@ -157,13 +189,21 @@ export function DiaryEntryForm({ pastures, herdGroups }: DiaryEntryFormProps) {
       </div>
 
       {/* Submit */}
-      <div className="flex gap-3">
-        <button
-          type="submit"
-          className="rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-        >
-          Save entry
-        </button>
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-3">
+          <button
+            type="submit"
+            disabled={isPending}
+            className="rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+          >
+            {isPending ? "Saving…" : "Save entry"}
+          </button>
+        </div>
+        {offlineSaved && (
+          <p className="text-xs text-amber-700 dark:text-amber-400">
+            Saved locally — will sync when you reconnect
+          </p>
+        )}
       </div>
     </form>
   );
