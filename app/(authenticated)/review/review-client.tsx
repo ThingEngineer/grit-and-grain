@@ -55,14 +55,26 @@ export function ReviewClient({ previousReviews }: ReviewClientProps) {
         body: JSON.stringify({ weekStart, weekEnd }),
       });
 
+      const data = (await res.json().catch(() => ({}))) as {
+        summary_md?: string;
+        error?: string;
+        saved?: boolean;
+      };
+
       if (!res.ok) {
-        throw new Error("Failed to generate review");
+        setError(
+          data.error ??
+            "Something went wrong generating the review. Please try again.",
+        );
+        return;
       }
 
-      const data = await res.json();
-      setSummaryMd(data.summary_md);
+      setSummaryMd(data.summary_md ?? null);
     } catch {
-      setError("Something went wrong generating the review. Please try again.");
+      // Network-level failure (no response received)
+      setError(
+        "Unable to reach the server. Check your connection and try again.",
+      );
     } finally {
       setIsLoading(false);
     }

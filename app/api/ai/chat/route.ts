@@ -4,7 +4,15 @@ import { searchDiaryEntries } from "@/lib/rag/search";
 import { FARM_MEMORY_SYSTEM_PROMPT } from "@/lib/ai/prompts";
 
 export async function POST(request: Request) {
-  const { messages } = (await request.json()) as { messages: UIMessage[] };
+  let messages: UIMessage[];
+  try {
+    ({ messages } = (await request.json()) as { messages: UIMessage[] });
+  } catch {
+    return Response.json(
+      { error: "Invalid request. Please refresh and try again." },
+      { status: 400 },
+    );
+  }
 
   const lastUserMessage = messages.filter((m) => m.role === "user").pop();
 
@@ -77,14 +85,25 @@ export async function POST(request: Request) {
   const modelMessages = await convertToModelMessages(cleanedMessages);
 
   // Stream the response
-  const result = streamText({
-    model: chatModel,
-    system: FARM_MEMORY_SYSTEM_PROMPT.replace(
-      "{{ context_passages }}",
-      contextPassages,
-    ),
-    messages: modelMessages,
-  });
+  try {
+    const result = streamText({
+      model: chatModel,
+      system: FARM_MEMORY_SYSTEM_PROMPT.replace(
+        "{{ context_passages }}",
+        contextPassages,
+      ),
+      messages: modelMessages,
+      onError: (event) => {
+        console.error("[chat route] streamText error:", event.error);
+      },
+    });
 
-  return result.toUIMessageStreamResponse();
+    return result.toUIMessageStreamResponse();
+  } catch (err) {
+    console.error("[chat route] Unexpected error:", err);
+    return Response.json(
+      { error: "The AI service is temporarily unavailable. Please try again." },
+      { status: 503 },
+    );
+  }
 }

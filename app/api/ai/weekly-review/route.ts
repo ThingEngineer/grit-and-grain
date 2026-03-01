@@ -48,11 +48,21 @@ export async function POST(request: Request) {
   ).replace("{{ weekly_entries }}", weeklyEntries);
 
   // Generate the review
-  const { text } = await generateText({
-    model: chatModel,
-    system: prompt,
-    prompt: "Generate the weekly review now.",
-  });
+  let text: string;
+  try {
+    ({ text } = await generateText({
+      model: chatModel,
+      system: prompt,
+      prompt: "Generate the weekly review now.",
+    }));
+  } catch (err) {
+    console.error("[weekly-review route] AI generation error:", err);
+    const message =
+      err instanceof Error && err.message.toLowerCase().includes("rate")
+        ? "Too many requests — please wait a moment and try again."
+        : "The AI service is temporarily unavailable. Please try again in a moment.";
+    return Response.json({ error: message }, { status: 503 });
+  }
 
   // Save to database
   const { data: review } = await supabase
