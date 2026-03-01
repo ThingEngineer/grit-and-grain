@@ -41,6 +41,7 @@ export async function proxy(request: NextRequest) {
   // Redirect unauthenticated users away from protected routes
   if (
     !user &&
+    request.nextUrl.pathname !== "/" &&
     !request.nextUrl.pathname.startsWith("/login") &&
     !request.nextUrl.pathname.startsWith("/auth") &&
     !request.nextUrl.pathname.startsWith("/signup")
@@ -50,10 +51,11 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Redirect authenticated users away from auth pages
+  // Redirect authenticated users away from auth / landing pages
   if (
     user &&
-    (request.nextUrl.pathname.startsWith("/login") ||
+    (request.nextUrl.pathname === "/" ||
+      request.nextUrl.pathname.startsWith("/login") ||
       request.nextUrl.pathname.startsWith("/signup"))
   ) {
     const url = request.nextUrl.clone();
