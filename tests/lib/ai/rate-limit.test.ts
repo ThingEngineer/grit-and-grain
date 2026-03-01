@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-import { checkRateLimit } from "@/lib/ai/rate-limit";
 
 // The rate-limit module keeps state in a module-level Map.
 // Re-import a fresh module for each test to avoid state bleed.
