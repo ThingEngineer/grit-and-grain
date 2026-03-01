@@ -27,7 +27,7 @@ export function LandingNav() {
         <Link
           href="/"
           className={`font-serif text-xl font-semibold transition-colors ${
-            scrolled ? "text-foreground" : "text-white"
+            scrolled ? "text-foreground" : "text-zinc-900"
           }`}
         >
           Grit &amp; Grain
@@ -39,7 +39,7 @@ export function LandingNav() {
             className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors sm:px-4 sm:py-2 ${
               scrolled
                 ? "border-border text-foreground hover:bg-muted"
-                : "border-white/30 text-white hover:bg-white/10"
+                : "border-white/30 text-zinc-900 hover:bg-white/10"
             }`}
           >
             Sign In

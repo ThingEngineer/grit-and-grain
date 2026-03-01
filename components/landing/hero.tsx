@@ -81,7 +81,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="mt-6 text-lg leading-relaxed text-white/85 md:text-xl"
+            className="mt-6 text-lg leading-relaxed text-zinc-900/85 md:text-xl"
           >
             The AI-powered field journal built for ranchers and small-scale
             farmers who carry their operation&apos;s history in their head — and
@@ -102,7 +102,7 @@ export function Hero() {
             </Link>
             <Link
               href="/login"
-              className="rounded-full border border-white/30 px-8 py-3 text-center font-medium text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+              className="rounded-full border border-white/30 px-8 py-3 text-center font-medium text-zinc-900 transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
             >
               Sign In
             </Link>
@@ -123,7 +123,7 @@ export function Hero() {
                   ? "Play background slideshow"
                   : "Pause background slideshow"
               }
-              className="flex items-center gap-2 text-xs text-white/60 transition-colors hover:text-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+              className="flex items-center gap-2 text-xs text-zinc-900/60 transition-colors hover:text-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
             >
               <span aria-hidden="true">{paused ? "▶" : "⏸"}</span>
               {paused ? "Resume slideshow" : "Pause slideshow"}
