@@ -9,11 +9,31 @@ export default function CallbackPage() {
   const supabase = createClient();
 
   useEffect(() => {
-    // Wait for client to process tokens from URL fragment, then redirect
-    const timer = setTimeout(() => {
+    async function handleRedirect() {
+      // Give Supabase client time to process tokens from URL fragment
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("full_name")
+          .eq("id", user.id)
+          .single();
+
+        if (!profile?.full_name) {
+          router.push("/profile?onboarding=true");
+          return;
+        }
+      }
+
       router.push("/dashboard");
-    }, 100);
-    return () => clearTimeout(timer);
+    }
+
+    handleRedirect();
   }, [router, supabase]);
 
   return (

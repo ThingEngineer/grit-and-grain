@@ -3,7 +3,11 @@ import { redirect } from "next/navigation";
 import { updateProfile } from "./actions";
 
 type ProfilePageProps = Readonly<{
-  searchParams: Promise<{ success?: string; error?: string }>;
+  searchParams: Promise<{
+    success?: string;
+    error?: string;
+    onboarding?: string;
+  }>;
 }>;
 
 export default async function ProfilePage({ searchParams }: ProfilePageProps) {
@@ -23,12 +27,25 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
     .single();
 
   const params = await searchParams;
+  const isOnboarding = params.onboarding === "true";
 
   return (
     <div className="mx-auto max-w-lg">
-      <h1 className="mb-6 font-serif text-2xl font-bold text-foreground">
-        Profile
-      </h1>
+      {isOnboarding ? (
+        <>
+          <h1 className="mb-2 font-serif text-2xl font-bold text-foreground">
+            Welcome to Grit &amp; Grain
+          </h1>
+          <p className="mb-6 text-sm text-muted-foreground">
+            Let&apos;s get your ranch set up. Tell us a bit about yourself so we
+            can personalize your experience.
+          </p>
+        </>
+      ) : (
+        <h1 className="mb-6 font-serif text-2xl font-bold text-foreground">
+          Profile
+        </h1>
+      )}
 
       {params.success && (
         <div className="mb-4 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 dark:border-green-800 dark:bg-green-950 dark:text-green-200">
@@ -42,6 +59,8 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
       )}
 
       <form action={updateProfile} className="space-y-4">
+        {isOnboarding && <input type="hidden" name="onboarding" value="true" />}
+
         <div>
           <label
             htmlFor="full_name"
@@ -76,12 +95,22 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
           />
         </div>
 
-        <button
-          type="submit"
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-        >
-          Save changes
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="submit"
+            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            {isOnboarding ? "Save & Continue" : "Save changes"}
+          </button>
+          {isOnboarding && (
+            <a
+              href="/dashboard"
+              className="text-sm text-muted-foreground underline-offset-4 hover:underline"
+            >
+              Skip for now
+            </a>
+          )}
+        </div>
       </form>
     </div>
   );

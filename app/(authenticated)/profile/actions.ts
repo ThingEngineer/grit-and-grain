@@ -27,9 +27,18 @@ export async function updateProfile(formData: FormData) {
     .eq("id", user.id);
 
   if (error) {
-    return redirect("/profile?error=Failed to update profile");
+    const onboarding = formData.get("onboarding") === "true";
+    const errorRedirect = onboarding
+      ? "/profile?onboarding=true&error=Failed to update profile"
+      : "/profile?error=Failed to update profile";
+    return redirect(errorRedirect);
   }
 
   revalidatePath("/", "layout");
+
+  const isOnboarding = formData.get("onboarding") === "true";
+  if (isOnboarding) {
+    return redirect("/dashboard");
+  }
   return redirect("/profile?success=Profile updated successfully");
 }

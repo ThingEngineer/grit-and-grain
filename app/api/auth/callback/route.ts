@@ -11,6 +11,26 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
+      // Check if this is a new user who hasn't completed their profile
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("full_name")
+          .eq("id", user.id)
+          .single();
+
+        // New user — redirect to profile onboarding
+        if (!profile?.full_name) {
+          return NextResponse.redirect(
+            new URL("/profile?onboarding=true", request.url),
+          );
+        }
+      }
+
       return NextResponse.redirect(new URL(next, request.url));
     }
   }
