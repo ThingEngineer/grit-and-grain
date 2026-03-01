@@ -35,9 +35,11 @@ vi.mock("@/lib/supabase/server", () => ({
         if (table === "diary_entries") {
           return {
             select: () => ({
-              gte: () => ({
-                lte: () => ({
-                  order: mockOrderResult,
+              eq: () => ({
+                gte: () => ({
+                  lte: () => ({
+                    order: mockOrderResult,
+                  }),
                 }),
               }),
             }),
