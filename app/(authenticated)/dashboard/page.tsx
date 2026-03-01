@@ -1,36 +1,53 @@
-import { createClient } from "@/lib/supabase/server";
+import { unstable_cache } from "next/cache";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getUser, getProfile } from "@/lib/supabase/queries";
 import { DiaryEntryCard } from "@/components/diary-entry-card";
 import { EmptyState } from "@/components/empty-state";
 import { SeedButton } from "@/components/seed-button";
 import Link from "next/link";
 
+/**
+ * Per-user cached dashboard queries — revalidated on-demand via the
+ * "dashboard" tag (triggered by diary/pasture mutations) and time-based
+ * every 60 seconds as a safety net.
+ *
+ * Uses the admin client so the cached function works outside request context
+ * where cookies() is unavailable. The userId originates from a verified
+ * getUser() call, so explicit profile_id filtering is safe.
+ */
+const getDashboardData = unstable_cache(
+  async (userId: string) => {
+    const supabase = createAdminClient();
+    const [
+      { count: pastureCount },
+      // count: "exact" on a .limit() call returns the total un-paged count
+      { data: entries, count: entryCount },
+    ] = await Promise.all([
+      supabase
+        .from("pastures")
+        .select("*", { count: "exact", head: true })
+        .eq("profile_id", userId),
+      supabase
+        .from("diary_entries")
+        .select("*, pastures(name), herd_groups(name)", { count: "exact" })
+        .eq("profile_id", userId)
+        .order("entry_date", { ascending: false })
+        .limit(5),
+    ]);
+    return { pastureCount, entryCount, entries };
+  },
+  ["dashboard-data"],
+  { revalidate: 60, tags: ["dashboard"] },
+);
+
 export default async function DashboardPage() {
   const user = await getUser();
   const profile = await getProfile(user!.id);
-  const supabase = await createClient();
 
-  // Fetch dashboard data in parallel — profile already resolved from cache
-  const [
-    { count: entryCount },
-    { count: pastureCount },
-    { data: entries },
-  ] = await Promise.all([
-    supabase
-      .from("diary_entries")
-      .select("*", { count: "exact", head: true })
-      .eq("profile_id", user!.id),
-    supabase
-      .from("pastures")
-      .select("*", { count: "exact", head: true })
-      .eq("profile_id", user!.id),
-    supabase
-      .from("diary_entries")
-      .select("*, pastures(name), herd_groups(name)")
-      .eq("profile_id", user!.id)
-      .order("entry_date", { ascending: false })
-      .limit(5),
-  ]);
+  // Auth is live — data comes from the per-user cache
+  const { pastureCount, entryCount, entries } = await getDashboardData(
+    user!.id,
+  );
 
   const hasEntries = (entryCount ?? 0) > 0;
 

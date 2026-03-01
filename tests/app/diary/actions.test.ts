@@ -3,7 +3,9 @@ import { makeMockSupabase } from "@/tests/helpers/supabase";
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 const mockRedirect = vi.fn();
+const mockRevalidateTag = vi.fn();
 vi.mock("next/navigation", () => ({ redirect: mockRedirect }));
+vi.mock("next/cache", () => ({ revalidateTag: mockRevalidateTag }));
 
 const mockEmbed = vi.fn().mockResolvedValue({ embedding: [0.1, 0.2, 0.3] });
 vi.mock("ai", () => ({ embed: mockEmbed }));

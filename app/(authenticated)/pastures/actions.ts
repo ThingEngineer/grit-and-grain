@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function createPasture(formData: FormData) {
   const supabase = await createClient();
@@ -31,6 +31,7 @@ export async function createPasture(formData: FormData) {
   }
 
   revalidatePath("/pastures");
+  revalidateTag("dashboard", "max");
 }
 
 export async function deletePasture(formData: FormData) {
@@ -53,4 +54,5 @@ export async function deletePasture(formData: FormData) {
     .eq("profile_id", user.id);
 
   revalidatePath("/pastures");
+  revalidateTag("dashboard", "max");
 }

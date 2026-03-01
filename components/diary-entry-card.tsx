@@ -63,6 +63,7 @@ export function DiaryEntryCard({
           <div className="flex shrink-0 items-center gap-2">
             <Link
               href={`/diary/${id}/edit`}
+              prefetch={false}
               className="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               Edit

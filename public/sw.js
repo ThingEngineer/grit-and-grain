@@ -1,9 +1,9 @@
 // Grit & Grain Service Worker
 // ─────────────────────────────────────────────────────────────────────────────
 // Caching strategies:
-//   /_next/static/**   → cache-first       (content-hashed, immutable)
-//   /api/**            → network-only      (auth + mutations, never cache)
-//   page navigations   → network-first, cache HTML by pathname
+//   /_next/static/**   → cache-first               (content-hashed, immutable)
+//   /api/**            → network-only              (auth + mutations, never cache)
+//   page navigations   → stale-while-revalidate    (instant paint, background refresh)
 //   RSC fetches        → network-first, AND proactively cache full HTML page
 //   everything else    → stale-while-revalidate
 //
@@ -99,32 +99,43 @@ self.addEventListener("fetch", (event) => {
 // ─── Strategies ───────────────────────────────────────────────────────────────
 
 /**
- * Network-first for page navigate requests.
- * Caches HTML keyed by pathname only (strips query params) so the same
- * entry is found whether the browser does a navigate or the SW fetched proactively.
+ * Stale-while-revalidate for page navigate requests.
+ * Serves the cached HTML immediately (zero wait for repeat visitors) and
+ * refreshes the cache in the background. Falls back to a network fetch when
+ * no cache entry exists yet (first visit).
+ * Keyed by pathname only so the same entry is used regardless of query params.
  */
 async function networkFirstNav(request) {
   const pathname = new URL(request.url).pathname;
-  try {
-    const response = await fetch(request);
-    if (response.ok) {
-      const cache = await caches.open(CACHE_NAME);
-      await cache.put(pathname, response.clone());
-    }
-    return response;
-  } catch {
-    const cached =
-      (await caches.match(pathname)) ?? (await caches.match("/dashboard"));
-    return (
-      cached ??
-      new Response(
-        `<!doctype html><html><body style="font-family:sans-serif;padding:2rem">
-          <p>You are offline. <a href="/dashboard">Return to dashboard</a></p>
-        </body></html>`,
-        { status: 503, headers: { "Content-Type": "text/html" } },
-      )
-    );
+  const cache = await caches.open(CACHE_NAME);
+  const cached = await cache.match(pathname);
+
+  // Kick off a background revalidation regardless of cache state
+  const revalidate = fetch(request)
+    .then(async (response) => {
+      if (response.ok) {
+        await cache.put(pathname, response.clone());
+      }
+      return response;
+    })
+    .catch(() => null);
+
+  if (cached) {
+    // Serve stale immediately — background fetch updates cache for next visit
+    revalidate.catch(() => {});
+    return cached;
   }
+
+  // No cache yet — wait for the network (first visit)
+  return (
+    (await revalidate) ??
+    new Response(
+      `<!doctype html><html><body style="font-family:sans-serif;padding:2rem">
+        <p>You are offline. <a href="/dashboard">Return to dashboard</a></p>
+      </body></html>`,
+      { status: 503, headers: { "Content-Type": "text/html" } },
+    )
+  );
 }
 
 /** Network-first without caching — used for RSC payloads. */

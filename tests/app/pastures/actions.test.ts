@@ -4,9 +4,13 @@ import { makeMockSupabase } from "@/tests/helpers/supabase";
 // ── Mocks ────────────────────────────────────────────────────────────────────
 const mockRedirect = vi.fn();
 const mockRevalidatePath = vi.fn();
+const mockRevalidateTag = vi.fn();
 
 vi.mock("next/navigation", () => ({ redirect: mockRedirect }));
-vi.mock("next/cache", () => ({ revalidatePath: mockRevalidatePath }));
+vi.mock("next/cache", () => ({
+  revalidatePath: mockRevalidatePath,
+  revalidateTag: mockRevalidateTag,
+}));
 
 let mockSupabase = makeMockSupabase();
 vi.mock("@/lib/supabase/server", () => ({

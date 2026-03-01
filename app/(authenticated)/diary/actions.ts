@@ -6,6 +6,7 @@ import { embed } from "ai";
 import { embeddingModel } from "@/lib/ai/gateway";
 import { formatEntryForRag } from "@/lib/rag/format";
 import { redirect } from "next/navigation";
+import { revalidateTag } from "next/cache";
 
 export async function createEntry(formData: FormData) {
   const supabase = await createClient();
@@ -45,6 +46,7 @@ export async function createEntry(formData: FormData) {
     generateEmbedding(newEntry).catch(console.error);
   }
 
+  revalidateTag("dashboard", "max");
   redirect("/dashboard");
 }
 
@@ -87,6 +89,7 @@ export async function updateEntry(entryId: string, formData: FormData) {
     generateEmbedding(updatedEntry).catch(console.error);
   }
 
+  revalidateTag("dashboard", "max");
   redirect("/diary");
 }
 
@@ -113,6 +116,7 @@ export async function deleteEntry(entryId: string) {
     throw new Error("Failed to delete diary entry. Please try again.");
   }
 
+  revalidateTag("dashboard", "max");
   redirect("/diary");
 }
 
